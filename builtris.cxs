@@ -1,0 +1,94 @@
+Strict
+
+#GLFW_WINDOW_TITLE="Builtris"
+#GLFW_WINDOW_WIDTH=512
+#GLFW_WINDOW_HEIGHT=512
+#GLFW_WINDOW_RESIZABLE=True
+#GLFW_WINDOW_SAMPLES=0
+
+Import mojo.app
+Import mojo.input
+Import vortex
+
+Const SCREEN_SIZE:Int = 64
+
+Class BuiltrisApp Extends App Final
+	Method OnCreate:Int()
+		'Setup
+		SetUpdateRate(0)
+		SetSwapInterval(0)
+		Seed = Millisecs()
+		If Not World.Init() Then EndApp()
+		'World.SunColor(Color.Black)
+		World.SunRotation(45, -135)
+		
+		mCam = New Camera()
+		mCam.Orthographic = True
+		mCam.FovY = 2
+		mCam.Viewport(0, 0, SCREEN_SIZE, SCREEN_SIZE)
+		mCam.Framebuffer = New Framebuffer(SCREEN_SIZE, SCREEN_SIZE, True)
+		mCam.Rotate(45, -45, 0)
+		mCam.Move(0, 0, -4)
+		
+		mModel = New Model(Mesh.CreateCube())
+		
+		Return False
+	End
+	
+	Method OnUpdate:Int()
+		'End with escape key
+		#If TARGET<>"html5"
+		If KeyHit(KEY_ESCAPE) Then EndApp()
+		#End
+		
+		'Update world
+		World.Update()
+		
+		'Rotate cube
+		mModel.Pitch += 64 * World.DeltaTime()
+		
+		Return False
+	End
+	
+	Method OnRender:Int()
+		Local rect:ScreenRect = ScreenRect.Calculate()
+		World.Render()
+		Graphics.Setup2D(0, 0, DeviceWidth(), DeviceHeight())
+		Graphics.Clear()
+		mCam.Framebuffer.ColorTexture.Draw(rect.X, rect.Y, rect.Width, -rect.Height)
+		Return False
+	End
+Private
+	Field mCam:Camera
+	Field mModel:Model
+End
+
+Function Main:Int()
+	New BuiltrisApp
+	Return False
+End
+
+Class ScreenRect
+	Field X:Int
+	Field Y:Int
+	Field Width:Int
+	Field Height:Int
+	
+	Function Calculate:ScreenRect()
+		Local rect:ScreenRect = New ScreenRect
+		If DeviceWidth() > DeviceHeight()
+			Local ratio:Float = Float(DeviceHeight()) / DeviceWidth()
+			rect.Width = DeviceWidth() * ratio
+			rect.Height = DeviceHeight()
+			rect.X = (DeviceWidth() - rect.Width) / 2
+			rect.Y = 0
+		Else
+			Local ratio:Float = Float(DeviceWidth()) / DeviceHeight()
+			rect.Width = DeviceWidth()
+			rect.Height = DeviceHeight() * ratio
+			rect.X = 0
+			rect.Y = (DeviceHeight() - rect.Height) / 2
+		End
+		Return rect
+	End
+End
