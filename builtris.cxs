@@ -14,7 +14,6 @@ Const SCREEN_SIZE:Int = 64
 
 Class BuiltrisApp Extends App Final
 	Method OnCreate:Int()
-		'Setup
 		SetUpdateRate(0)
 		SetSwapInterval(0)
 		Seed = Millisecs()
@@ -22,15 +21,25 @@ Class BuiltrisApp Extends App Final
 		'World.SunColor(Color.Black)
 		World.SunRotation(45, -135)
 		
+		mFont = Font.Load("8-bit-hud_8.fnt.dat")
+		
 		mCam = New Camera()
 		mCam.Orthographic = True
-		mCam.FovY = 2
+		mCam.FovY = 4
 		mCam.Viewport(0, 0, SCREEN_SIZE, SCREEN_SIZE)
 		mCam.Framebuffer = New Framebuffer(SCREEN_SIZE, SCREEN_SIZE, True)
 		mCam.Rotate(45, -45, 0)
 		mCam.Move(0, 0, -4)
+		mCam.Position(mCam.X, mCam.Y + 2, mCam.Z)
 		
-		mModel = New Model(Mesh.CreateCube())
+		Local mesh:Mesh = Mesh.Load("roadTile_107.msh.dat")
+		Local max:Float = Max(Max(mesh.Width, mesh.Height), mesh.Depth)
+		Local offsetX:Float = (mesh.BoxMaxX - mesh.BoxMinX) / 2
+		Local offsetY:Float = (mesh.BoxMaxY - mesh.BoxMinY) / 2
+		Local offsetZ:Float = (mesh.BoxMaxZ - mesh.BoxMinZ) / 2
+		mesh.Translate(offsetX, offsetY, offsetZ)
+		mesh.Scale(1 / max, 1 / max, 1 / max)
+		mModel = New Model(mesh)
 		
 		Return False
 	End
@@ -44,8 +53,7 @@ Class BuiltrisApp Extends App Final
 		'Update world
 		World.Update()
 		
-		'Rotate cube
-		mModel.Pitch += 64 * World.DeltaTime()
+		'mModel.Yaw += 64 * World.DeltaTime()
 		
 		Return False
 	End
@@ -53,12 +61,23 @@ Class BuiltrisApp Extends App Final
 	Method OnRender:Int()
 		Local rect:ScreenRect = ScreenRect.Calculate()
 		World.Render()
+		
+		mCam.Framebuffer.Use()
+		Graphics.Setup2D(0, 0, SCREEN_SIZE, SCREEN_SIZE)
+		Local text:String = "Buildtris"
+		Graphics.Color(Color.DarkGray)
+		mFont.Draw((SCREEN_SIZE - mFont.TextWidth(text)) / 2 + 1, 1, text)
+		Graphics.Color(Color.Yellow)
+		mFont.Draw((SCREEN_SIZE - mFont.TextWidth(text)) / 2, 0, text)
+		Framebuffer.UseScreen()
+		
 		Graphics.Setup2D(0, 0, DeviceWidth(), DeviceHeight())
 		Graphics.Clear()
 		mCam.Framebuffer.ColorTexture.Draw(rect.X, rect.Y, rect.Width, -rect.Height)
 		Return False
 	End
 Private
+	Field mFont:Font
 	Field mCam:Camera
 	Field mModel:Model
 End
