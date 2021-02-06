@@ -18,7 +18,6 @@ Class BuiltrisApp Extends App Final
 		SetSwapInterval(0)
 		Seed = Millisecs()
 		If Not World.Init() Then EndApp()
-		'World.SunColor(Color.Black)
 		World.SunRotation(45, -135)
 		
 		mFont = Font.Load("8-bit-hud_8.fnt.dat")
@@ -64,7 +63,7 @@ Class BuiltrisApp Extends App Final
 		
 		mCam.Framebuffer.Use()
 		Graphics.Setup2D(0, 0, SCREEN_SIZE, SCREEN_SIZE)
-		Local text:String = "Buildtris"
+		Local text:String = "Builtris"
 		Graphics.Color(Color.DarkGray)
 		mFont.Draw((SCREEN_SIZE - mFont.TextWidth(text)) / 2 + 1, 1, text)
 		Graphics.Color(Color.Yellow)
