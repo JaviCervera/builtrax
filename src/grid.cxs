@@ -1,0 +1,84 @@
+Strict
+
+Private
+Import vortex
+
+Public
+Class Grid Final
+	Const NumRows:Int = 3
+	Const NumColumns:Int = 3
+	
+	Function Create:Grid(rows:Int[][])
+		If CheckRows(rows)
+			Return New Grid(rows)
+		Else
+			Return Null	
+		End
+	End
+	
+	Method MoveTile:Bool(column:Int, row:Int)
+		Return False
+	End
+Private
+	Field mRows:Model[][]
+	
+	Function CheckRows:Bool(rows:Int[][])
+		If rows.Length = NumRows
+			For Local row:Int[] = Eachin rows
+				If Not CheckRow(row) Then Return False
+			Next
+			Return True
+		Else
+			Return False
+		End
+	End
+	
+	Function CheckRow:Bool(row:Int[])
+		If row.Length = NumColumns
+			Return True
+		Else
+			Return False
+		End
+	End
+	
+	Method New(rows:Int[][])
+		mRows = New Model[NumRows][]
+		For Local i:Int = 0 Until rows.Length
+			mRows = Append(mRows, ParseRow(rows[i]))
+		Next
+	End
+	
+	Function Append:Model[][](arr:Model[][], row:Model[])
+		arr = arr.Resize(arr.Length + 1)
+		arr[arr.Length - 1] = row.Resize(row.Length)
+		Return arr
+	End
+	
+	Function ParseRow:Model[](row:Int[])
+		Local modelRow:Model[] = New Model[row.Length]
+		For Local i:Int = 0 Until row.Length
+			modelRow[i] = LoadModel(row[i])
+		Next
+		Return modelRow
+	End
+	
+	Function LoadModel:Model(id:Int)
+		Local model:Model = New Model(LoadMesh(id))
+		'Position model
+		Return model
+	End
+	
+	Function LoadMesh:Mesh(id:Int)
+		Local mesh:Mesh = Mesh.Load("roadTile_" + id + ".msh.dat")
+		Local max:Float = Max(Max(mesh.Width, mesh.Height), mesh.Depth)
+		Local offsetX:Float = (mesh.BoxMaxX - mesh.BoxMinX) / 2
+		Local offsetY:Float = (mesh.BoxMaxY - mesh.BoxMinY) / 2
+		Local offsetZ:Float = (mesh.BoxMaxZ - mesh.BoxMinZ) / 2
+		mesh.Translate(offsetX, offsetY, offsetZ)
+		mesh.Scale(1 / max, 1 / max, 1 / max)
+		Return mesh
+	End
+	
+	Method New()
+	End
+End
