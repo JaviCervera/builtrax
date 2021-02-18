@@ -63,9 +63,13 @@ Private
 	End
 	
 	Function LoadModel:Model(id:Int, rowIndex:Int, colIndex:Int)
-		Local model:Model = New Model(LoadMesh(id))
-		model.Position(colIndex, 0, NumRows - rowIndex - 1)
-		Return model
+		If id <> 0
+			Local model:Model = New Model(LoadMesh(id))
+			model.Position(colIndex, 0, NumRows - rowIndex - 1)
+			Return model
+		Else
+			Return Null
+		End
 	End
 	
 	Function LoadMesh:Mesh(id:Int)

@@ -34,9 +34,9 @@ Class BuiltrisApp Extends App Final
 		mCam.Position(mCam.X, mCam.Y + 2, mCam.Z)
 		
 		mGrid = Grid.Create([
-			[107, 107, 107],
-			[107, 107, 107],
-			[107, 107, 107]])
+			[101, 102, 103],
+			[104,   0, 106],
+			[107, 108, 109]])
 		
 		Return False
 	End
