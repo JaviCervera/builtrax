@@ -69,13 +69,17 @@ Private
 	End
 	
 	Function LoadMesh:Mesh(id:Int)
-		Local mesh:Mesh = Mesh.Load("roadTile_" + id + ".msh.dat")
-		Local max:Float = Max(Max(mesh.Width, mesh.Height), mesh.Depth)
-		Local offsetX:Float = (mesh.BoxMaxX - mesh.BoxMinX) / 2
-		Local offsetY:Float = (mesh.BoxMaxY - mesh.BoxMinY) / 2
-		Local offsetZ:Float = (mesh.BoxMaxZ - mesh.BoxMinZ) / 2
-		mesh.Translate(offsetX, offsetY, offsetZ)
-		mesh.Scale(1 / max, 1 / max, 1 / max)
+		Local filename:String = "roadTile_" + id + ".msh.dat"
+		Local wasLoaded:Bool = Mesh.IsLoaded(filename)
+		Local mesh:Mesh = Mesh.Load(filename)
+		If Not wasLoaded
+			Local max:Float = Max(Max(mesh.Width, mesh.Height), mesh.Depth)
+			Local offsetX:Float = (mesh.BoxMaxX - mesh.BoxMinX) / 2
+			Local offsetY:Float = (mesh.BoxMaxY - mesh.BoxMinY) / 2
+			Local offsetZ:Float = (mesh.BoxMaxZ - mesh.BoxMinZ) / 2
+			mesh.Translate(offsetX, offsetY, offsetZ)
+			mesh.Scale(1 / max, 1 / max, 1 / max)
+		End
 		Return mesh
 	End
 	
