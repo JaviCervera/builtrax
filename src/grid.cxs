@@ -44,7 +44,7 @@ Private
 	Method New(rows:Int[][])
 		mRows = New Model[NumRows][]
 		For Local i:Int = 0 Until rows.Length
-			mRows = Append(mRows, ParseRow(rows[i]))
+			mRows = Append(mRows, ParseRow(rows[i], i))
 		Next
 	End
 	
@@ -54,17 +54,17 @@ Private
 		Return arr
 	End
 	
-	Function ParseRow:Model[](row:Int[])
+	Function ParseRow:Model[](row:Int[], rowIndex:Int)
 		Local modelRow:Model[] = New Model[row.Length]
 		For Local i:Int = 0 Until row.Length
-			modelRow[i] = LoadModel(row[i])
+			modelRow[i] = LoadModel(row[i], rowIndex, i)
 		Next
 		Return modelRow
 	End
 	
-	Function LoadModel:Model(id:Int)
+	Function LoadModel:Model(id:Int, rowIndex:Int, colIndex:Int)
 		Local model:Model = New Model(LoadMesh(id))
-		'Position model
+		model.Position(colIndex, 0, NumRows - rowIndex - 1)
 		Return model
 	End
 	
