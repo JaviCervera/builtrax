@@ -19,6 +19,13 @@ Class Grid Final
 	Method MoveTile:Bool(column:Int, row:Int)
 		Return False
 	End
+	
+	Method Model:Model(column:Int, row:Int)
+		Print(column + ", " + row)
+		Print(mRows.Length + ", " + mRows[0].Length)
+		Return Null
+		Return mRows[row][column]
+	End
 Private
 	Field mRows:Model[][]
 	
@@ -66,6 +73,7 @@ Private
 		If id <> 0
 			Local model:Model = New Model(LoadMesh(id))
 			model.Position(colIndex, 0, NumRows - rowIndex - 1)
+			model.Pickable(True)
 			Return model
 		Else
 			Return Null

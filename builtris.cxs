@@ -24,8 +24,8 @@ Class BuiltrisApp Extends App Final
 		mFont = Font.Load("8-bit-hud_8.fnt.dat")
 		
 		mCam = New Camera()
-		mCam.Orthographic = True
-		mCam.FovY = 4
+		'mCam.Orthographic = True
+		'mCam.FovY = 4
 		mCam.Viewport(0, 0, SCREEN_SIZE, SCREEN_SIZE)
 		mCam.Framebuffer = New Framebuffer(SCREEN_SIZE, SCREEN_SIZE, True)
 		mCam.Position(Grid.NumColumns * 1.75 / 3, 0, 0.1)
@@ -47,6 +47,8 @@ Class BuiltrisApp Extends App Final
 		If KeyHit(KEY_ESCAPE) Then EndApp()
 		#End
 		
+		UpdatePick()
+		
 		'Update world
 		World.Update()
 		
@@ -54,7 +56,7 @@ Class BuiltrisApp Extends App Final
 	End
 	
 	Method OnRender:Int()
-		Local rect:ScreenRect = ScreenRect.Calculate()
+		mScreenRect = ScreenRect.Calculate()
 		World.Render()
 		
 		mCam.Framebuffer.Use()
@@ -68,13 +70,27 @@ Class BuiltrisApp Extends App Final
 		
 		Graphics.Setup2D(0, 0, DeviceWidth(), DeviceHeight())
 		Graphics.Clear()
-		mCam.Framebuffer.ColorTexture.Draw(rect.X, rect.Y, rect.Width, -rect.Height)
+		mCam.Framebuffer.ColorTexture.Draw(mScreenRect.X, mScreenRect.Y, mScreenRect.Width, -mScreenRect.Height)
 		Return False
 	End
 Private
 	Field mFont:Font
 	Field mCam:Camera
 	Field mGrid:Grid
+	Field mScreenRect:ScreenRect
+	
+	Method UpdatePick:Void()
+		Local ratio:Float = SCREEN_SIZE * 1.0 / mScreenRect.Width
+		If MouseDown(MOUSE_LEFT) And World.CameraPick(mCam, (MouseX() - mScreenRect.X) * ratio, (MouseY() - mScreenRect.Y) * ratio)
+			For Local row:Int = 0 Until Grid.NumRows
+				For Local col:Int = 0 Until Grid.NumColumns
+					Local model:Model = mGrid.Model(col, row)
+					'If model <> Null Then model.Material.Color = Color.White
+				Next
+			Next
+			World.PickedEntity().Material.Color = Color.Red
+		End
+	End
 End
 
 Function Main:Int()
