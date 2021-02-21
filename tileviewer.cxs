@@ -18,7 +18,7 @@ Class TileSelectApp Extends App Final
 		If Not World.Init() Then EndApp()
 		World.SunRotation(45, -135)
 		
-		mFont = Font.Load("8-bit-hud_8.fnt.dat")
+		mFont = Font.Load("LiberationMono-Regular_16.fnt.dat")
 		
 		mCam = New Camera()
 		mCam.Orthographic = True
