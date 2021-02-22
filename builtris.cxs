@@ -26,12 +26,13 @@ Class BuiltrisApp Extends App Final
 		mCam = New Camera()
 		'mCam.Orthographic = True
 		'mCam.FovY = 4
+		mCam.FovY = 35
 		mCam.Viewport(0, 0, SCREEN_SIZE, SCREEN_SIZE)
 		mCam.Framebuffer = New Framebuffer(SCREEN_SIZE, SCREEN_SIZE, True)
 		mCam.Position(Grid.NumColumns * 1.75 / 3, 0, 0.1)
 		mCam.Rotate(45, -45, 0)
 		mCam.Move(0, 0, -4)
-		mCam.Position(mCam.X, mCam.Y + 2, mCam.Z)
+		mCam.Position(mCam.X + 0.5, mCam.Y + 2, mCam.Z - 0.5)
 		
 		mGrid = Grid.Create([
 			[101, 102, 103],
