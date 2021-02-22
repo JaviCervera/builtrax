@@ -86,10 +86,10 @@ Private
 			For Local row:Int = 0 Until Grid.NumRows
 				For Local col:Int = 0 Until Grid.NumColumns
 					Local model:Model = mGrid.Model(col, row)
-					'If model <> Null Then model.Material.Color = Color.White
+					If model <> Null Then model.Material.Color = Color.White
 				Next
 			Next
-			World.PickedEntity().Material.Color = Color.Red
+			World.PickedEntity().Material.Color = Color.Yellow
 		End
 	End
 End

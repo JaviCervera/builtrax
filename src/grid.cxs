@@ -21,9 +21,6 @@ Class Grid Final
 	End
 	
 	Method Model:Model(column:Int, row:Int)
-		Print(column + ", " + row)
-		Print(mRows.Length + ", " + mRows[0].Length)
-		Return Null
 		Return mRows[row][column]
 	End
 Private
@@ -49,7 +46,7 @@ Private
 	End
 	
 	Method New(rows:Int[][])
-		mRows = New Model[NumRows][]
+		mRows = New Model[0][]
 		For Local i:Int = 0 Until rows.Length
 			mRows = Append(mRows, ParseRow(rows[i], i))
 		Next
@@ -74,6 +71,7 @@ Private
 			Local model:Model = New Model(LoadMesh(id))
 			model.Position(colIndex, 0, NumRows - rowIndex - 1)
 			model.Pickable(True)
+			model.Material.Color = Color.White
 			Return model
 		Else
 			Return Null
