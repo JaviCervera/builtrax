@@ -10,6 +10,7 @@ Import mojo.app
 Import mojo.input
 Import vortex
 Import src.grid
+Import src.tile
 
 Const SCREEN_SIZE:Int = 64
 
@@ -29,7 +30,7 @@ Class BuiltrisApp Extends App Final
 		mCam.FovY = 35
 		mCam.Viewport(0, 0, SCREEN_SIZE, SCREEN_SIZE)
 		mCam.Framebuffer = New Framebuffer(SCREEN_SIZE, SCREEN_SIZE, True)
-		mCam.Position(Grid.NumColumns * 1.75 / 3, 0, 0.1)
+		mCam.Position(Tile.NumColumns * 1.75 / 3, 0, 0.1)
 		mCam.Rotate(45, -45, 0)
 		mCam.Move(0, 0, -4)
 		mCam.Position(mCam.X + 0.5, mCam.Y + 2, mCam.Z - 0.5)
@@ -83,13 +84,7 @@ Private
 	Method UpdatePick:Void()
 		Local ratio:Float = SCREEN_SIZE * 1.0 / mScreenRect.Width
 		If MouseDown(MOUSE_LEFT) And World.CameraPick(mCam, (MouseX() - mScreenRect.X) * ratio, (MouseY() - mScreenRect.Y) * ratio)
-			For Local row:Int = 0 Until Grid.NumRows
-				For Local col:Int = 0 Until Grid.NumColumns
-					Local model:Model = mGrid.Model(col, row)
-					If model <> Null Then model.Material.Color = Color.White
-				Next
-			Next
-			World.PickedEntity().Material.Color = Color.Yellow
+			grid.MoveTile(grid.TileAt(World.PickedEntity()))
 		End
 	End
 End

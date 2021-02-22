@@ -1,0 +1,25 @@
+Class Tile Final
+	Const NumRows:Int = 3
+	Const NumColumns:Int = 3
+	
+	Field Column:Int
+	Field Row:Int
+	
+	Method New(column:Int, row:Int)
+		Self.Column = column
+		Self.Row = row
+	End
+	
+	Function FromPoint:Tile(x:Float, y:Float)
+		Return New Tile(Int(x), NumRows - Int(y) - 1)
+	End
+	
+	Method X:Float() Property
+		Return Column
+	End
+	
+	Method Y:Float() Property
+		Return NumRows - Row - 1
+	End
+	
+End

@@ -2,12 +2,10 @@ Strict
 
 Private
 Import vortex
+Import tile
 
 Public
-Class Grid Final
-	Const NumRows:Int = 3
-	Const NumColumns:Int = 3
-	
+Class Grid Final	
 	Function Create:Grid(rows:Int[][])
 		If CheckRows(rows)
 			Return New Grid(rows)
@@ -16,18 +14,35 @@ Class Grid Final
 		End
 	End
 	
-	Method MoveTile:Bool(column:Int, row:Int)
-		Return False
+	Method MoveTile:Bool(tile:Tile)
+		Local adjacent:Tile = EmptyAdjacentTile(tile)
+		If adjacent <> Null
+			Local model:Model = Model(tile)
+			mRows[adjacent.Row][adjacent.Column] = model
+			mRows[tile.Row][tile.Column] = Null
+			model.Position(adjacent.X, 0, adjacent.Y)
+			Return True
+		Else
+			Return False
+		End
 	End
 	
-	Method Model:Model(column:Int, row:Int)
-		Return mRows[row][column]
+	Method Model:Model(tile:Tile)
+		If tile.Row > 0 And tile.Row < Tile.NumRows And tile.Column > 0 And tile.Column < Tile.NumColumns
+			Return mRows[tile.Row][tile.Column]
+		Else
+			Return Null
+		End
+	End
+	
+	Method TileAt:Tile(entity:Entity)
+		Return Tile.FromPoint(entity.WorldX, entity.WorldZ)
 	End
 Private
 	Field mRows:Model[][]
 	
 	Function CheckRows:Bool(rows:Int[][])
-		If rows.Length = NumRows
+		If rows.Length = Tile.NumRows
 			For Local row:Int[] = Eachin rows
 				If Not CheckRow(row) Then Return False
 			Next
@@ -38,7 +53,7 @@ Private
 	End
 	
 	Function CheckRow:Bool(row:Int[])
-		If row.Length = NumColumns
+		If row.Length = Tile.NumColumns
 			Return True
 		Else
 			Return False
@@ -68,10 +83,10 @@ Private
 	
 	Function LoadModel:Model(id:Int, rowIndex:Int, colIndex:Int)
 		If id <> 0
+			Local tile:Tile = New Tile(colIndex, rowIndex)
 			Local model:Model = New Model(LoadMesh(id))
-			model.Position(colIndex, 0, NumRows - rowIndex - 1)
+			model.Position(tile.X, 0, tile.Y)
 			model.Pickable(True)
-			model.Material.Color = Color.White
 			Return model
 		Else
 			Return Null
@@ -91,6 +106,32 @@ Private
 			mesh.Scale(1 / max, 1 / max, 1 / max)
 		End
 		Return mesh
+	End
+	
+	Method EmptyAdjancentTile:Tile(tile:Tile)
+		Local left:Tile = New Tile(tile.Column - 1, tile.Row)
+		Local right:Tile = New Tile(tile.Column + 1, tile.Row)
+		Local down:Tile = New Tile(tile.Column, tile.Row - 1)
+		Local up:Tile = New Tile(tile.Column, tile.Row + 1)
+		If IsEmptyTile(left)
+			Return left
+		Elseif IsEmptyTile(right)
+			Return right
+		Elseif IsEmptyTile(down)
+			Return down
+		Elseif IsEmptyTile(up)
+			Return up
+		Else
+			Return Null
+		End
+	End
+	
+	Method IsEmptyTile:Bool(tile:Tile)
+		If Model(tile) = Null
+			Return True
+		Else
+			Return False
+		End
 	End
 	
 	Method New()
