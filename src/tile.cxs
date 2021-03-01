@@ -21,5 +21,4 @@ Class Tile Final
 	Method Y:Float() Property
 		Return NumRows - Row - 1
 	End
-	
 End

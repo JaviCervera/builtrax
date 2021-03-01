@@ -17,7 +17,7 @@ Class Grid Final
 	Method MoveTile:Bool(tile:Tile)
 		Local adjacent:Tile = EmptyAdjacentTile(tile)
 		If adjacent <> Null
-			Local model:Model = Model(tile)
+			Local model:Model = Self.Model(tile)
 			mRows[adjacent.Row][adjacent.Column] = model
 			mRows[tile.Row][tile.Column] = Null
 			model.Position(adjacent.X, 0, adjacent.Y)
@@ -28,7 +28,7 @@ Class Grid Final
 	End
 	
 	Method Model:Model(tile:Tile)
-		If tile.Row > 0 And tile.Row < Tile.NumRows And tile.Column > 0 And tile.Column < Tile.NumColumns
+		If tile.Row >= 0 And tile.Row < Tile.NumRows And tile.Column >= 0 And tile.Column < Tile.NumColumns
 			Return mRows[tile.Row][tile.Column]
 		Else
 			Return Null
@@ -108,26 +108,26 @@ Private
 		Return mesh
 	End
 	
-	Method EmptyAdjancentTile:Tile(tile:Tile)
+	Method EmptyAdjacentTile:Tile(tile:Tile)
 		Local left:Tile = New Tile(tile.Column - 1, tile.Row)
 		Local right:Tile = New Tile(tile.Column + 1, tile.Row)
-		Local down:Tile = New Tile(tile.Column, tile.Row - 1)
-		Local up:Tile = New Tile(tile.Column, tile.Row + 1)
+		Local up:Tile = New Tile(tile.Column, tile.Row - 1)
+		Local down:Tile = New Tile(tile.Column, tile.Row + 1)
 		If IsEmptyTile(left)
 			Return left
 		Elseif IsEmptyTile(right)
 			Return right
-		Elseif IsEmptyTile(down)
-			Return down
 		Elseif IsEmptyTile(up)
 			Return up
+		Elseif IsEmptyTile(down)
+			Return down
 		Else
 			Return Null
 		End
 	End
 	
 	Method IsEmptyTile:Bool(tile:Tile)
-		If Model(tile) = Null
+		If tile.Row >= 0 And tile.Row < Tile.NumRows And tile.Column >= 0 And tile.Column < Tile.NumColumns And Self.Model(tile) = Null
 			Return True
 		Else
 			Return False

@@ -83,8 +83,8 @@ Private
 	
 	Method UpdatePick:Void()
 		Local ratio:Float = SCREEN_SIZE * 1.0 / mScreenRect.Width
-		If MouseDown(MOUSE_LEFT) And World.CameraPick(mCam, (MouseX() - mScreenRect.X) * ratio, (MouseY() - mScreenRect.Y) * ratio)
-			grid.MoveTile(grid.TileAt(World.PickedEntity()))
+		If MouseHit(MOUSE_LEFT) And World.CameraPick(mCam, (MouseX() - mScreenRect.X) * ratio, (MouseY() - mScreenRect.Y) * ratio)
+			mGrid.MoveTile(mGrid.TileAt(World.PickedEntity()))
 		End
 	End
 End
