@@ -40,6 +40,8 @@ Class BuiltrisApp Extends App Final
 			[104,   0, 106],
 			[107, 108, 109]])
 		
+		mRun = Texture.Load("run.png")
+		
 		Return False
 	End
 	
@@ -50,6 +52,7 @@ Class BuiltrisApp Extends App Final
 		#End
 		
 		UpdatePick()
+		UpdateButtonColor()
 		
 		'Update world
 		World.Update()
@@ -58,18 +61,18 @@ Class BuiltrisApp Extends App Final
 	End
 	
 	Method OnRender:Int()
+		'Draw world to framebuffer
 		mScreenRect = ScreenRect.Calculate()
 		World.Render()
 		
+		'Draw UI to framebuffer
 		mCam.Framebuffer.Use()
 		Graphics.Setup2D(0, 0, SCREEN_SIZE, SCREEN_SIZE)
-		Local text:String = "Builtris"
-		Graphics.Color(Color.DarkGray)
-		mFont.Draw((SCREEN_SIZE - mFont.TextWidth(text)) / 2 + 1, 1, text)
-		Graphics.Color(Color.Yellow)
-		mFont.Draw((SCREEN_SIZE - mFont.TextWidth(text)) / 2, 0, text)
+		If mButtonHovered Then Graphics.Color(Color.Green) Else Graphics.Color(Color.Multiply(Color.Green, 0.5))
+		mRun.Draw(SCREEN_SIZE - 8, SCREEN_SIZE - 12)
 		Framebuffer.UseScreen()
 		
+		'Draw framebuffer to screen
 		Graphics.Setup2D(0, 0, DeviceWidth(), DeviceHeight())
 		Graphics.Clear()
 		mCam.Framebuffer.ColorTexture.Draw(mScreenRect.X, mScreenRect.Y, mScreenRect.Width, -mScreenRect.Height)
@@ -79,6 +82,8 @@ Private
 	Field mFont:Font
 	Field mCam:Camera
 	Field mGrid:Grid
+	Field mRun:Texture
+	Field mButtonHovered:Bool
 	Field mScreenRect:ScreenRect
 	
 	Method UpdatePick:Void()
@@ -86,6 +91,10 @@ Private
 		If MouseHit(MOUSE_LEFT) And World.CameraPick(mCam, (MouseX() - mScreenRect.X) * ratio, (MouseY() - mScreenRect.Y) * ratio)
 			mGrid.MoveTile(mGrid.TileAt(World.PickedEntity()))
 		End
+	End
+	
+	Method UpdateButtonColor:Void()
+		mButtonHovered = MouseX() >= mScreenRect.X + mScreenRect.Width - (mScreenRect.Width / 4) And MouseY() >= mScreenRect.Y + mScreenRect.Height - (mScreenRect.Height / 4)
 	End
 End
 
