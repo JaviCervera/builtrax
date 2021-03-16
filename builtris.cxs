@@ -36,9 +36,9 @@ Class BuiltrisApp Extends App Final
 		mCam.Position(mCam.X + 0.5, mCam.Y + 2, mCam.Z - 0.5)
 		
 		mGrid = Grid.Create([
-			[101, 102, 103],
-			[104,   0, 106],
-			[107, 108, 109]])
+			[3, 2, 4],
+			[1, 0, 1],
+			[6, 2, 5]])
 		
 		mRun = Texture.Load("run.png")
 		
