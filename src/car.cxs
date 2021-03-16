@@ -1,0 +1,30 @@
+Strict
+
+Private
+Import tile
+Import vortex
+
+Public
+Class Car
+	Method New(tile:Tile)
+		mCar = New Model(LoadUnitMesh("sedanSports.msh.dat"))
+		mCar.Position(tile.X, 0, tile.Y)
+		mCar.Scale(0.8, 0.8, 0.8)
+	End
+	
+	Method Update:Void()
+		mCar.Turn(0, 90 * World.DeltaTime(), 0)
+	End
+Private
+	Field mCar:Model
+	
+	Function LoadUnitMesh:Mesh(filename:String)
+		Local wasLoaded:Bool = Mesh.IsLoaded(filename)
+		Local mesh:Mesh = Mesh.Load(filename)
+		If Not wasLoaded
+			Local max:Float = Max(Max(mesh.Width, mesh.Height), mesh.Depth)
+			mesh.Scale(1 / max, 1 / max, 1 / max)
+		End
+		Return mesh
+	End
+End

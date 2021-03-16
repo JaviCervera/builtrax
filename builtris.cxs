@@ -9,6 +9,7 @@ Strict
 Import mojo.app
 Import mojo.input
 Import vortex
+Import src.car
 Import src.flagpole
 Import src.grid
 Import src.tile
@@ -42,7 +43,9 @@ Class BuiltrisApp Extends App Final
 			[6, 2, 5]])
 		
 		
-		New FlagPole(New Tile(1, -1))
+		mCar = New Car(New Tile(1, 1))
+		
+		mFlag = New FlagPole(New Tile(1, -1))
 		
 		mRun = Texture.Load("run.png")
 		
@@ -57,8 +60,7 @@ Class BuiltrisApp Extends App Final
 		
 		UpdatePick()
 		UpdateButtonColor()
-		
-		'Update world
+		mCar.Update()
 		World.Update()
 		
 		Return False
@@ -86,6 +88,8 @@ Private
 	Field mFont:Font
 	Field mCam:Camera
 	Field mGrid:Grid
+	Field mCar:Car
+	Field mFlag:FlagPole
 	Field mRun:Texture
 	Field mButtonHovered:Bool
 	Field mScreenRect:ScreenRect
