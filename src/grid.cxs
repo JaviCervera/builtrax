@@ -1,8 +1,9 @@
 Strict
 
+
 Private
-Import vortex
 Import tile
+Import vortex
 
 Public
 Class Grid Final	

@@ -9,6 +9,7 @@ Strict
 Import mojo.app
 Import mojo.input
 Import vortex
+Import src.flagpole
 Import src.grid
 Import src.tile
 
@@ -39,6 +40,9 @@ Class BuiltrisApp Extends App Final
 			[3, 2, 4],
 			[1, 0, 1],
 			[6, 2, 5]])
+		
+		
+		New FlagPole(New Tile(1, -1))
 		
 		mRun = Texture.Load("run.png")
 		
