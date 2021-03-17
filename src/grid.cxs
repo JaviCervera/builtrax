@@ -2,6 +2,7 @@ Strict
 
 
 Private
+Import brl.filepath
 Import tile
 Import vortex
 
@@ -19,7 +20,7 @@ Class Grid Final
 	Method MoveTile:Bool(tile:Tile)
 		Local adjacent:Tile = EmptyAdjacentTile(tile)
 		If adjacent <> Null
-			Local model:Model = Self.Model(tile)
+			Local model:Model = Self.ModelAt(tile)
 			mRows[adjacent.Row][adjacent.Column] = model
 			mRows[tile.Row][tile.Column] = Null
 			model.Position(adjacent.X, 0, adjacent.Y)
@@ -29,18 +30,54 @@ Class Grid Final
 		End
 	End
 	
-	Method Model:Model(tile:Tile)
-		If tile.Row >= 0 And tile.Row < Tile.NumRows And tile.Column >= 0 And tile.Column < Tile.NumColumns
+	Method ModelAt:Model(tile:Tile)
+		If tile.IsInner()
 			Return mRows[tile.Row][tile.Column]
 		Else
 			Return Null
 		End
 	End
 	
-	Method TileAt:Tile(entity:Entity)
-		Return Tile.FromPoint(entity.WorldX, entity.WorldZ)
+	Method TileExit:Int(tile:Tile, lastExit:Int)
+		Local exits:Int[] = AllExitsForTile(tile)
+		Local excludeExit:Int = AdjacentExit(lastExit)
+		If excludeExit <> -1
+			If exits.Length >= 2 And exits[1] = excludeExit Then exits = exits[0 .. 1]
+			If exits.Length >= 1 And exits[0] = excludeExit Then exits = exits[1 .. exits.Length]
+		End
+		If exits.Length > 0
+			Local nextTile:Tile = NextTile(tile, exits[0])
+			If TileHasExit(nextTile, AdjacentExit(exits[0]))
+				Return exits[0]
+			Else
+				Return -1
+			End
+		Else
+			Return -1
+		End
+	End
+	
+	Method NextTile:Tile(fromTile:Tile, selectedExit:Int)
+		Local nextTile:Tile = Null
+		Select selectedExit
+		Case Left
+			Return New Tile(fromTile.Column - 1, fromTile.Row)
+		Case Right
+			Return New Tile(fromTile.Column + 1, fromTile.Row)
+		Case Top
+			Return New Tile(fromTile.Column, fromTile.Row - 1)
+		Case Bottom
+			Return New Tile(fromTile.Column, fromTile.Row + 1)
+		Default
+			Return Null
+		End
 	End
 Private
+	Const Left:Int = 2
+	Const Right:Int = 0
+	Const Top:Int = 1
+	Const Bottom:Int = 3
+	
 	Global mQuad:Mesh
 	Field mRows:Model[][]
 	
@@ -134,10 +171,66 @@ Private
 	End
 	
 	Method IsEmptyTile:Bool(tile:Tile)
-		If tile.Row >= 0 And tile.Row < Tile.NumRows And tile.Column >= 0 And tile.Column < Tile.NumColumns And Self.Model(tile) = Null
+		If tile.Row >= 0 And tile.Row < Tile.NumRows And tile.Column >= 0 And tile.Column < Tile.NumColumns And Self.ModelAt(tile) = Null
 			Return True
 		Else
 			Return False
+		End
+	End
+	
+	Method TileHasExit:Bool(tile:Tile, exit_:Int)
+		Local exits:Int[] = AllExitsForTile(tile)
+		For Local ex:Int = Eachin exits
+			If ex = exit_ Then Return True
+		Next
+		Return False
+	End
+	
+	Method AllExitsForTile:Int[](tile:Tile)
+		Local model:Model = ModelAt(tile)
+		Local exits:Int[] = []
+		If model <> Null
+			Local id:Int = Int(StripExt(model.Material(0).ColorTexture.Filename))
+			Local exitsMap:IntMap<Int[]> = ExitsMap()
+			If exitsMap.Contains(id) Then exits = exitsMap.Get(id)
+		End
+		If exits.Length = 0 And Not tile.IsInner()
+			If tile.Column < 0
+				exits = [Right]
+			Elseif tile.Column >= Tile.NumColumns
+				exits = [Left]
+			Elseif tile.Row < 0
+				exits = [Bottom]
+			Else
+				exits = [Top]
+			End
+		End
+		Return exits
+	End
+	
+	Function ExitsMap:IntMap<Int[]>()
+		Local exitsMap:IntMap<Int[]> = New IntMap<Int[]>()
+		exitsMap.Add(1, [Top, Bottom])
+		exitsMap.Add(2, [Left, Right])
+		exitsMap.Add(3, [Right, Bottom])
+		exitsMap.Add(4, [Left, Bottom])
+		exitsMap.Add(5, [Left, Top])
+		exitsMap.Add(6, [Right, Top])
+		Return exitsMap
+	End
+	
+	Function AdjacentExit:Int(selectedExit:Int)
+		Select selectedExit
+		Case Left
+			Return Right
+		Case Right
+			Return Left
+		Case Top
+			Return Bottom
+		Case Bottom
+			Return Top
+		Default
+			Return -1
 		End
 	End
 	

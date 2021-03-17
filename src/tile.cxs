@@ -1,3 +1,7 @@
+Private
+Import vortex
+
+Public
 Class Tile Final
 	Const NumRows:Int = 3
 	Const NumColumns:Int = 3
@@ -14,11 +18,31 @@ Class Tile Final
 		Return New Tile(Int(x), NumRows - Int(y) - 1)
 	End
 	
+	Function FromEntity:Tile(entity:Entity, id:Int)
+		Return FromPoint(entity.WorldX, entity.WorldZ)
+	End
+	
 	Method X:Float() Property
 		Return Column
 	End
 	
 	Method Y:Float() Property
 		Return NumRows - Row - 1
+	End
+	
+	Method IsInner:Bool()
+		Return Column >= 0 And Column < NumColumns And Row >= 0 And Row < NumRows
+	End
+	
+	Method Equals:Bool(other:Tile)
+		If other <> Null And Column = other.Column And Row = other.Row
+			Return True
+		Else
+			Return False
+		End
+	End
+	
+	Method ToString:String()
+		Return "Tile(Column: " + Column + ", Row: " + Row + ")"
 	End
 End

@@ -27,8 +27,6 @@ Class BuiltrisApp Extends App Final
 		mFont = Font.Load("8-bit-hud_8.fnt.dat")
 		
 		mCam = New Camera()
-		'mCam.Orthographic = True
-		'mCam.FovY = 4
 		mCam.FovY = 35
 		mCam.Viewport(0, 0, SCREEN_SIZE, SCREEN_SIZE)
 		mCam.Framebuffer = New Framebuffer(SCREEN_SIZE, SCREEN_SIZE, True)
@@ -43,11 +41,13 @@ Class BuiltrisApp Extends App Final
 			[6, 2, 5]])
 		
 		
-		mCar = New Car(New Tile(1, 1))
+		mCarTile = New Tile(1, 3)
+		mCar = New Car(mCarTile)
 		
-		mFlag = New FlagPole(New Tile(1, -1))
+		mFlagTile = New Tile(1, -1)
+		mFlag = New FlagPole(mFlagTile)
 		
-		mRun = Texture.Load("run.png")
+		mButton = Texture.Load("run.png")
 		
 		Return False
 	End
@@ -59,7 +59,7 @@ Class BuiltrisApp Extends App Final
 		#End
 		
 		UpdatePick()
-		UpdateButtonColor()
+		UpdateButton()
 		mCar.Update()
 		World.Update()
 		
@@ -75,7 +75,7 @@ Class BuiltrisApp Extends App Final
 		mCam.Framebuffer.Use()
 		Graphics.Setup2D(0, 0, SCREEN_SIZE, SCREEN_SIZE)
 		If mButtonHovered Then Graphics.Color(Color.Green) Else Graphics.Color(Color.Multiply(Color.Green, 0.5))
-		mRun.Draw(SCREEN_SIZE - 8, SCREEN_SIZE - 12)
+		mButton.Draw(SCREEN_SIZE - 8, SCREEN_SIZE - 12)
 		Framebuffer.UseScreen()
 		
 		'Draw framebuffer to screen
@@ -88,21 +88,41 @@ Private
 	Field mFont:Font
 	Field mCam:Camera
 	Field mGrid:Grid
+	Field mCarTile:Tile
 	Field mCar:Car
+	Field mFlagTile:Tile
 	Field mFlag:FlagPole
-	Field mRun:Texture
+	Field mButton:Texture
 	Field mButtonHovered:Bool
 	Field mScreenRect:ScreenRect
 	
 	Method UpdatePick:Void()
 		Local ratio:Float = SCREEN_SIZE * 1.0 / mScreenRect.Width
 		If MouseHit(MOUSE_LEFT) And World.CameraPick(mCam, (MouseX() - mScreenRect.X) * ratio, (MouseY() - mScreenRect.Y) * ratio)
-			mGrid.MoveTile(mGrid.TileAt(World.PickedEntity()))
+			mGrid.MoveTile(Tile.FromEntity(World.PickedEntity(), 0))
 		End
 	End
 	
-	Method UpdateButtonColor:Void()
+	Method UpdateButton:Void()
 		mButtonHovered = MouseX() >= mScreenRect.X + mScreenRect.Width - (mScreenRect.Width / 4) And MouseY() >= mScreenRect.Y + mScreenRect.Height - (mScreenRect.Height / 4)
+		If MouseHit(MOUSE_LEFT) And mButtonHovered
+			Local currentTile:Tile = mCarTile
+			Local currentExit:Int = mGrid.TileExit(currentTile, -1)
+			Local tiles:Tile[] = New Tile[0]
+			While Not currentTile.Equals(mFlagTile)
+				If Not currentTile.Equals(mCarTile)
+					tiles = tiles.Resize(tiles.Length + 1)
+					tiles[tiles.Length - 1] = currentTile
+				End
+				currentTile = mGrid.NextTile(currentTile, currentExit)
+				If currentTile = Null Then Exit
+				currentExit = mGrid.TileExit(currentTile, currentExit)
+			Wend
+			If currentTile <> Null And currentTile.Equals(mFlagTile)
+				tiles = tiles.Resize(tiles.Length + 1)
+				tiles[tiles.Length - 1] = currentTile
+			End
+		End
 	End
 End
 

@@ -7,15 +7,19 @@ Import vortex
 Public
 Class Car
 	Method New(tile:Tile)
-		mCar = New Model(LoadUnitMesh("sedanSports.msh.dat"))
-		mCar.Position(tile.X, 0, tile.Y)
+		mParent = New Entity()
+		mCar = New Model(LoadUnitMesh("sedanSports.msh.dat"), mParent)
+		mCar.Rotate(0, -90, 0)
 		mCar.Scale(0.8, 0.8, 0.8)
+		mParent.Position(tile.X, 0, tile.Y)
+		mParent.Rotate(0, Yaw(tile), 0)
 	End
 	
 	Method Update:Void()
-		mCar.Turn(0, 90 * World.DeltaTime(), 0)
+		'mCar.Turn(0, 90 * World.DeltaTime(), 0)
 	End
 Private
+	Field mParent:Entity
 	Field mCar:Model
 	
 	Function LoadUnitMesh:Mesh(filename:String)
@@ -26,5 +30,17 @@ Private
 			mesh.Scale(1 / max, 1 / max, 1 / max)
 		End
 		Return mesh
+	End
+	
+	Method Yaw:Float(tile:Tile)
+		If tile.Column < 0
+			Return 90
+		Elseif tile.Column >= Tile.NumRows
+			Return -90
+		Elseif tile.Row < 0
+			Return 180
+		Else
+			Return 0
+		End
 	End
 End
