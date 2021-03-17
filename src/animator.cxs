@@ -1,0 +1,47 @@
+Private
+Import vortex
+
+Public
+Class Animator
+	Method New(time:Float, delegate:AnimatorDelegate)
+		mRemainingTime = time
+		mTotalTime = time
+		mDelegate = delegate
+		animators.AddLast(Self)
+	End
+
+	Method Delegate:AnimatorDelegate() Property
+		Return mDelegate
+	End
+	
+	Method Update:Bool()
+		mRemainingTime -= World.DeltaTime()
+		Return True
+	End
+	
+	Method Alpha:Float() Property
+		Return (mTotalTime - mRemainingTime) / mTotalTime
+	End
+	
+	Function UpdateAll:Void()
+		Local finished:List<Animator> = New List<Animator>()
+		For Local animator:Animator = Eachin animators
+			If animator.Update() Then finished.AddLast(animator)
+		Next
+		For Local animator:Animator = Eachin finished
+			If animator.mDelegate <> Null Then animator.mDelegate.OnAnimatorEnd(animator)
+			animators.RemoveFirst(animator)
+		Next
+		finished.Clear()
+	End
+Private
+	Global animators:List<Animator> = New List<Animator>()
+
+	Field mRemainingTime:Float
+	Field mTotalTime:Float
+	Field mDelegate:AnimatorDelegate
+End
+
+Interface AnimatorDelegate
+	Method OnAnimatorEnd:Void(animator:Animator)
+End

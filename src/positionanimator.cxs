@@ -1,0 +1,36 @@
+Private
+Import animator
+Import vortex
+Import vortex.src.math3d
+
+Public
+Class PositionAnimator Extends Animator
+	Method New(entity:Entity, toX:Float, toY:Float, toZ:Float, time:Float, delegate:AnimatorDelegate)
+		Super.New(time, delegate)
+		mEntity = entity
+		mStartX = entity.X
+		mStartY = entity.Y
+		mStartZ = entity.Z
+		mEndX = toX
+		mEndY = toY
+		mEndZ = toZ
+	End
+	
+	Method Update:Bool()
+		Super.Update()
+		Local t:Float = Self.Alpha
+		Vec3Mix(mStartX, mStartY, mStartZ, mEndX, mEndY, mEndZ, Min(t, 1.0), mOut)
+		mEntity.Position(mOut[0], mOut[1], mOut[2])
+		Return t >= 1
+	End
+Private
+	Global mOut:Float[3]
+
+	Field mEntity:Entity
+	Field mStartX:Float
+	Field mStartY:Float
+	Field mStartZ:Float
+	Field mEndX:Float
+	Field mEndY:Float
+	Field mEndZ:Float
+End

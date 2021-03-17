@@ -23,7 +23,7 @@ Class Grid Final
 			Local model:Model = Self.ModelAt(tile)
 			mRows[adjacent.Row][adjacent.Column] = model
 			mRows[tile.Row][tile.Column] = Null
-			model.Position(adjacent.X, 0, adjacent.Y)
+			model.Position(adjacent.X, 0, adjacent.Z)
 			Return True
 		Else
 			Return False
@@ -134,7 +134,7 @@ Private
 			Local tile:Tile = New Tile(colIndex, rowIndex)
 			Local model:Model = New Model(mQuad)
 			model.Material(0).ColorTexture = Texture.Load(LPad(id, "0", 2) + ".png", Texture.FilterNone)
-			model.Position(tile.X, 0, tile.Y)
+			model.Position(tile.X, 0, tile.Z)
 			model.Pickable(True)
 			Return model
 		Else

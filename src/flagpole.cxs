@@ -10,7 +10,7 @@ Class FlagPole
 		mSprite = New Sprite(Texture.Load("flagpole.png", Texture.FilterNone), 2, 1)
 		mSprite.Size(0.8, 0.8)
 		mSprite.AnimFPS = 4
-		mSprite.Position(tile.X, 0.4, tile.Y)
+		mSprite.Position(tile.X, 0.4, tile.Z)
 	End
 Private
 	Field mSprite:Sprite
