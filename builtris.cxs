@@ -81,7 +81,7 @@ Class BuiltrisApp Extends App Implements AnimatorDelegate
 		'Draw UI to framebuffer
 		mCam.Framebuffer.Use()
 		Graphics.Setup2D(0, 0, SCREEN_SIZE, SCREEN_SIZE)
-		If mTilePath = Null And mGrid.NextTile(mCarTile, -1) <> Null
+		If mTilePath = Null And mGrid.NextTile(mCarTile, mGrid.TileExit(mCarTile, -1)) <> Null
 			If mButtonHovered Then Graphics.Color(Color.Green) Else Graphics.Color(Color.Multiply(Color.Green, 0.5))
 			mButton.Draw(SCREEN_SIZE - 8, SCREEN_SIZE - 12)
 		End
@@ -125,7 +125,7 @@ Private
 	
 	Method UpdateButton:Bool()
 		mButtonHovered = MouseX() >= mScreenRect.X + mScreenRect.Width - (mScreenRect.Width / 4) And MouseY() >= mScreenRect.Y + mScreenRect.Height - (mScreenRect.Height / 4)
-		If MouseHit(MOUSE_LEFT) And mButtonHovered And mTilePath = Null And mGrid.NextTile(mCarTile, -1) <> Null
+		If MouseHit(MOUSE_LEFT) And mButtonHovered And mTilePath = Null And mGrid.NextTile(mCarTile, mGrid.TileExit(mCarTile, -1)) <> Null
 			Return True
 		Else
 			Return False
