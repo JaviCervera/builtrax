@@ -1,3 +1,7 @@
+Private
+Import vortex
+
+Public
 Class Widget
 	Method New(x:Int, y:Int, delegate:WidgetDelegate)
 		widgets.AddLast(Self)
@@ -5,6 +9,7 @@ Class Widget
 		Self.X = x
 		Self.Y = y
 		Self.Visible = True
+		Self.Color = vortex.Color.White
 	End
 	
 	Method Discard:Void()
@@ -55,6 +60,14 @@ Class Widget
 		mVisible = visible
 	End
 	
+	Method Color:Int() Property
+		Return mColor
+	End
+	
+	Method Color:Void(color:Int) Property
+		mColor = color
+	End
+	
 	Method IsHovered:Bool(x:Int, y:Int)
 		Return x >= Self.X And x <= Self.X + Self.Width And y >= Self.Y And y <= Self.Y + Self.Height
 	End
@@ -63,7 +76,9 @@ Class Widget
 		If IsHovered(x, y) And clicked And mDelegate <> Null Then mDelegate.OnClick(Self)
 	End
 
-	Method Draw:Void() Abstract
+	Method Draw:Void()
+		Graphics.Color(mColor)
+	End
 	
 	Function UpdateAll:Void(x:Int, y:Int, clicked:Bool)
 		For Local widget:Widget = Eachin widgets
@@ -83,6 +98,7 @@ Private
 	Field mWidth:Int
 	Field mHeight:Int
 	Field mVisible:Bool
+	Field mColor:Int
 
 	Global widgets:List<Widget> = New List<Widget>()
 End

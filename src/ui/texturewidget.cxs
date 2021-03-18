@@ -9,24 +9,14 @@ Class TextureWidget Extends Widget
 		mTexture = texture
 		Self.Width = texture.Width
 		Self.Height = texture.Height
-		Self.Color = vortex.Color.White
 	End
 	
 	Method Draw:Void()
-		Graphics.Color(mColor)
+		Super.Draw()
 		mTexture.Draw(Self.X, Self.Y, Self.Width, Self.Height)
-	End
-	
-	Method Color:Int() Property
-		Return mColor
-	End
-	
-	Method Color:Void(color:Int) Property
-		mColor = color
 	End
 Private
 	Field mTexture:Texture
-	Field mColor:Int
 	
 	Method New()
 	End

@@ -95,7 +95,7 @@ Private
 	Field mLevel:Level
 	Field mCar:Car
 	Field mFlag:FlagPole
-	Field mButton:TextureWidget
+	Field mButton:Widget
 	Field mScreenRect:ScreenRect
 	
 	Method UpdatePick:Void()
