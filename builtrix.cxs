@@ -3,6 +3,8 @@ Strict
 #GLFW_WINDOW_TITLE="Builtrix"
 #GLFW_WINDOW_WIDTH=512
 #GLFW_WINDOW_HEIGHT=512
+#HTML5_CANVAS_WIDTH=512
+#HTML5_CANVAS_HEIGHT=512
 #GLFW_WINDOW_RESIZABLE=True
 #GLFW_WINDOW_SAMPLES=0
 
@@ -14,10 +16,12 @@ Import src.car
 Import src.flagpole
 Import src.level
 Import src.tile
+Import src.ui.texturewidget
+Import src.ui.widget
 
 Const SCREEN_SIZE:Int = 64
 
-Class BuiltrixApp Extends App
+Class BuiltrixApp Extends App Implements WidgetDelegate
 	Method OnCreate:Int()
 		SetUpdateRate(20)
 		SetSwapInterval(True)
@@ -40,7 +44,9 @@ Class BuiltrixApp Extends App
 		mCar = New Car(mLevel.CarTile)
 		mFlag = New FlagPole(mLevel.FlagTile)
 		
-		mButton = Texture.Load("run.png")
+		mButton = New TextureWidget(Texture.Load("run.png"), SCREEN_SIZE - 8, SCREEN_SIZE - 12, Self)
+		
+		mScreenRect = ScreenRect.Calculate()
 		
 		Return False
 	End
@@ -51,11 +57,13 @@ Class BuiltrixApp Extends App
 		If KeyHit(KEY_ESCAPE) Then EndApp()
 		#End
 		
+		mScreenRect = ScreenRect.Calculate()
+		Local mouseX:Int = mScreenRect.ScreenX(MouseX())
+		Local mouseY:Int = mScreenRect.ScreenY(MouseY())
 		UpdatePick()
-		If UpdateButton()
-			mCar.SetPath(mLevel.CalculatePathToFlag(), mLevel.FlagTile)
-		End
+		UpdateButton(mouseX, mouseY)
 		Animator.UpdateAll()
+		Widget.UpdateAll(mouseX, mouseY, MouseHit(MOUSE_LEFT) <> 0)
 		World.Update()
 		
 		Return False
@@ -63,16 +71,12 @@ Class BuiltrixApp Extends App
 	
 	Method OnRender:Int()
 		'Draw world to framebuffer
-		mScreenRect = ScreenRect.Calculate()
 		World.Render()
 		
 		'Draw UI to framebuffer
 		mCam.Framebuffer.Use()
 		Graphics.Setup2D(0, 0, SCREEN_SIZE, SCREEN_SIZE)
-		If mButtonEnabled
-			If mButtonHovered Then Graphics.Color(Color.Green) Else Graphics.Color(Color.Multiply(Color.Green, 0.5))
-			mButton.Draw(SCREEN_SIZE - 8, SCREEN_SIZE - 12)
-		End
+		Widget.DrawAll()
 		Framebuffer.UseScreen()
 		
 		'Draw framebuffer to screen
@@ -81,15 +85,17 @@ Class BuiltrixApp Extends App
 		mCam.Framebuffer.ColorTexture.Draw(mScreenRect.X, mScreenRect.Y, mScreenRect.Width, -mScreenRect.Height)
 		Return False
 	End
+	
+	Method OnClick:Void(widget:Widget)
+		mCar.SetPath(mLevel.CalculatePathToFlag(), mLevel.FlagTile)
+	End
 Private
 	Field mFont:Font
 	Field mCam:Camera
 	Field mLevel:Level
 	Field mCar:Car
 	Field mFlag:FlagPole
-	Field mButton:Texture
-	Field mButtonEnabled:Bool
-	Field mButtonHovered:Bool
+	Field mButton:TextureWidget
 	Field mScreenRect:ScreenRect
 	
 	Method UpdatePick:Void()
@@ -99,10 +105,13 @@ Private
 		End
 	End
 	
-	Method UpdateButton:Bool()
-		mButtonEnabled = Not mCar.Moving And mLevel.CarHasEntry()
-		mButtonHovered = MouseX() >= mScreenRect.X + mScreenRect.Width - (mScreenRect.Width / 4) And MouseY() >= mScreenRect.Y + mScreenRect.Height - (mScreenRect.Height / 4)
-		Return MouseHit(MOUSE_LEFT) And mButtonHovered And mButtonEnabled
+	Method UpdateButton:Void(mouseX:Int, mouseY:Int)
+		mButton.Visible = Not mCar.Moving And mLevel.CarHasEntry()
+		If mButton.IsHovered(mouseX, mouseY)
+			mButton.Color = Color.Green
+		Else
+			mButton.Color = Color.Multiply(Color.Green, 0.5)
+		End
 	End
 End
 
@@ -133,5 +142,13 @@ Class ScreenRect
 			rect.Y = (DeviceHeight() - rect.Height) / 2
 		End
 		Return rect
+	End
+	
+	Method ScreenX:Int(x:Int)
+		Return Float(x - Self.X) * SCREEN_SIZE / Self.Width
+	End
+	
+	Method ScreenY:Int(y:Int)
+		Return Float(y - Self.Y) * SCREEN_SIZE / Self.Height
 	End
 End

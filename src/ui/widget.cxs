@@ -1,0 +1,92 @@
+Class Widget
+	Method New(x:Int, y:Int, delegate:WidgetDelegate)
+		widgets.AddLast(Self)
+		mDelegate = delegate
+		Self.X = x
+		Self.Y = y
+		Self.Visible = True
+	End
+	
+	Method Discard:Void()
+		widgets.RemoveFirst(Self)
+	End
+	
+	Method Delegate:WidgetDelegate() Property
+		Return mDelegate
+	End
+	
+	Method X:Int() Property
+		Return mX
+	End
+	
+	Method X:Void(x:Int) Property
+		mX = x
+	End
+	
+	Method Y:Int() Property
+		Return mY
+	End
+	
+	Method Y:Void(y:Int) Property
+		mY = y
+	End
+	
+	Method Width:Int() Property
+		Return mWidth
+	End
+	
+	Method Width:Void(width:Int) Property
+		mWidth = width
+	End
+	
+	Method Height:Int() Property
+		Return mHeight
+	End
+	
+	Method Height:Void(height:Int) Property
+		mHeight = height
+	End
+	
+	Method Visible:Bool() Property
+		Return mVisible
+	End
+	
+	Method Visible:Void(visible:Bool) Property
+		mVisible = visible
+	End
+	
+	Method IsHovered:Bool(x:Int, y:Int)
+		Return x >= Self.X And x <= Self.X + Self.Width And y >= Self.Y And y <= Self.Y + Self.Height
+	End
+	
+	Method Update:Void(x:Int, y:Int, clicked:Bool)
+		If IsHovered(x, y) And clicked And mDelegate <> Null Then mDelegate.OnClick(Self)
+	End
+
+	Method Draw:Void() Abstract
+	
+	Function UpdateAll:Void(x:Int, y:Int, clicked:Bool)
+		For Local widget:Widget = Eachin widgets
+			If widget.Visible Then widget.Update(x, y, clicked)
+		Next
+	End
+	
+	Function DrawAll:Void()
+		For Local widget:Widget = Eachin widgets
+			If widget.Visible Then widget.Draw()
+		Next
+	End
+Private
+	Field mDelegate:WidgetDelegate
+	Field mX:Int
+	Field mY:Int
+	Field mWidth:Int
+	Field mHeight:Int
+	Field mVisible:Bool
+
+	Global widgets:List<Widget> = New List<Widget>()
+End
+
+Interface WidgetDelegate
+	Method OnClick:Void(widget:Widget)
+End
