@@ -11,7 +11,8 @@ Strict
 Import mojo.app
 Import mojo.input
 Import vortex
-Import src.animator
+Import src.animator.animator
+Import src.animator.widgetpositionanimator
 Import src.car
 Import src.flagpole
 Import src.level
@@ -19,7 +20,6 @@ Import src.tile
 Import src.ui.texturewidget
 Import src.ui.textwidget
 Import src.ui.widget
-Import src.widgetpositionanimator
 
 Const SCREEN_SIZE:Int = 64
 

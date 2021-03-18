@@ -1,8 +1,8 @@
 Strict
 
 Private
-Import animator
-Import positionanimator
+Import src.animator.animator
+Import src.animator.positionanimator
 Import tile
 Import vortex
 
