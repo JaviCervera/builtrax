@@ -1,6 +1,6 @@
 Strict
 
-#GLFW_WINDOW_TITLE="Builtris"
+#GLFW_WINDOW_TITLE="Builtrix"
 #GLFW_WINDOW_WIDTH=512
 #GLFW_WINDOW_HEIGHT=512
 #GLFW_WINDOW_RESIZABLE=True
@@ -17,7 +17,7 @@ Import src.tile
 
 Const SCREEN_SIZE:Int = 64
 
-Class BuiltrisApp Extends App
+Class BuiltrixApp Extends App
 	Method OnCreate:Int()
 		SetUpdateRate(20)
 		SetSwapInterval(True)
@@ -131,7 +131,7 @@ Private
 End
 
 Function Main:Int()
-	New BuiltrisApp
+	New BuiltrixApp
 	Return False
 End
 
