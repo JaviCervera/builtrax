@@ -13,12 +13,11 @@ Import src.animator
 Import src.car
 Import src.flagpole
 Import src.grid
-Import src.positionanimator
 Import src.tile
 
 Const SCREEN_SIZE:Int = 64
 
-Class BuiltrisApp Extends App Implements AnimatorDelegate
+Class BuiltrisApp Extends App
 	Method OnCreate:Int()
 		SetUpdateRate(20)
 		SetSwapInterval(True)
@@ -51,8 +50,6 @@ Class BuiltrisApp Extends App Implements AnimatorDelegate
 		
 		mButton = Texture.Load("run.png")
 		
-		mTilePath = Null
-		
 		Return False
 	End
 	
@@ -64,8 +61,7 @@ Class BuiltrisApp Extends App Implements AnimatorDelegate
 		
 		UpdatePick()
 		If UpdateButton()
-			SetPathToFlag()
-			CreateCarAnimatorToNextNode()
+			mCar.SetPath(CalculatePathToFlag(), mFlagTile)
 		End
 		Animator.UpdateAll()
 		World.Update()
@@ -81,7 +77,7 @@ Class BuiltrisApp Extends App Implements AnimatorDelegate
 		'Draw UI to framebuffer
 		mCam.Framebuffer.Use()
 		Graphics.Setup2D(0, 0, SCREEN_SIZE, SCREEN_SIZE)
-		If mTilePath = Null And mGrid.NextTile(mCarTile, mGrid.TileExit(mCarTile, -1)) <> Null
+		If mButtonEnabled
 			If mButtonHovered Then Graphics.Color(Color.Green) Else Graphics.Color(Color.Multiply(Color.Green, 0.5))
 			mButton.Draw(SCREEN_SIZE - 8, SCREEN_SIZE - 12)
 		End
@@ -93,16 +89,6 @@ Class BuiltrisApp Extends App Implements AnimatorDelegate
 		mCam.Framebuffer.ColorTexture.Draw(mScreenRect.X, mScreenRect.Y, mScreenRect.Width, -mScreenRect.Height)
 		Return False
 	End
-	
-	Method OnAnimatorEnd:Void(animator:Animator)
-		If Not CreateCarAnimatorToNextNode()
-			If Tile.FromEntity(mCar.Entity).Equals(mFlagTile)
-				Print("You win!")
-			Else
-				Print("You lose :(")
-			End
-		End
-	End
 Private
 	Field mFont:Font
 	Field mCam:Camera
@@ -112,8 +98,8 @@ Private
 	Field mFlagTile:Tile
 	Field mFlag:FlagPole
 	Field mButton:Texture
+	Field mButtonEnabled:Bool
 	Field mButtonHovered:Bool
-	Field mTilePath:List<Tile>
 	Field mScreenRect:ScreenRect
 	
 	Method UpdatePick:Void()
@@ -124,38 +110,23 @@ Private
 	End
 	
 	Method UpdateButton:Bool()
+		mButtonEnabled = Not mCar.Moving And mGrid.NextTile(mCarTile, mGrid.TileExit(mCarTile, -1)) <> Null
 		mButtonHovered = MouseX() >= mScreenRect.X + mScreenRect.Width - (mScreenRect.Width / 4) And MouseY() >= mScreenRect.Y + mScreenRect.Height - (mScreenRect.Height / 4)
-		If MouseHit(MOUSE_LEFT) And mButtonHovered And mTilePath = Null And mGrid.NextTile(mCarTile, mGrid.TileExit(mCarTile, -1)) <> Null
-			Return True
-		Else
-			Return False
-		End
+		Return MouseHit(MOUSE_LEFT) And mButtonHovered And mButtonEnabled
 	End
 	
-	Method SetPathToFlag:Void()
-		If mTilePath = Null
-			Local currentTile:Tile = mCarTile
-			Local currentExit:Int = mGrid.TileExit(currentTile, -1)
-			mTilePath = New List<Tile>()
-			While Not currentTile.Equals(mFlagTile)
-				If Not currentTile.Equals(mCarTile) Then mTilePath.AddLast(currentTile)
-				currentTile = mGrid.NextTile(currentTile, currentExit)
-				If currentTile = Null Then Exit
-				currentExit = mGrid.TileExit(currentTile, currentExit)
-			Wend
-			If currentTile <> Null And currentTile.Equals(mFlagTile) Then mTilePath.AddLast(currentTile)
-		End
-	End
-	
-	Method CreateCarAnimatorToNextNode:Bool()
-		If Not mTilePath.IsEmpty()
-			Local nextTile:Tile = mTilePath.RemoveFirst()
-			mCar.RotateToTile(nextTile)
-			New PositionAnimator(mCar.Entity, nextTile.X, 0, nextTile.Z, 1, Self)
-			Return True
-		Else
-			Return False
-		End
+	Method CalculatePathToFlag:List<Tile>()
+		Local path:List<Tile> = New List<Tile>()
+		Local currentTile:Tile = mCarTile
+		Local currentExit:Int = mGrid.TileExit(currentTile, -1)
+		While Not currentTile.Equals(mFlagTile)
+			If Not currentTile.Equals(mCarTile) Then path.AddLast(currentTile)
+			currentTile = mGrid.NextTile(currentTile, currentExit)
+			If currentTile = Null Then Exit
+			currentExit = mGrid.TileExit(currentTile, currentExit)
+		Wend
+		If currentTile <> Null And currentTile.Equals(mFlagTile) Then path.AddLast(currentTile)
+		Return path
 	End
 End
 

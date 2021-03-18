@@ -1,11 +1,13 @@
 Strict
 
 Private
+Import animator
+Import positionanimator
 Import tile
 Import vortex
 
 Public
-Class Car
+Class Car Implements AnimatorDelegate
 	Method New(tile:Tile)
 		mParent = New Entity()
 		mCar = New Model(LoadUnitMesh("sedanSports.msh.dat"), mParent)
@@ -13,29 +15,34 @@ Class Car
 		mCar.Scale(0.8, 0.8, 0.8)
 		mParent.Position(tile.X, 0, tile.Z)
 		mParent.Rotate(0, Yaw(tile), 0)
+		mPath = Null
+		mTarget = Null
 	End
 	
-	Method Entity:Entity() Property
-		Return mParent
+	Method SetPath:Void(path:List<Tile>, target:Tile)
+		mPath = path
+		mTarget = target
+		CreateAnimatorToNextNode()
 	End
 	
-	Method RotateToTile:Void(tile:Tile)
-		Local myTile:Tile = Tile.FromEntity(mParent)
-		Local yaw:Float = mParent.Yaw
-		If myTile.Column < tile.Column
-			yaw = 90
-		Elseif myTile.Column > tile.Column
-			yaw = -90
-		Elseif myTile.Row < tile.Row
-			yaw = 180
-		Else
-			yaw = 0
+	Method Moving:Bool() Property
+		Return mPath <> Null
+	End
+	
+	Method OnAnimatorEnd:Void(animator:Animator)
+		If Not CreateAnimatorToNextNode()
+			If Tile.FromEntity(mParent).Equals(mTarget)
+				Print("You win!")
+			Else
+				Print("You lose :(")
+			End
 		End
-		mParent.Rotate(0, yaw, 0)
 	End
 Private
 	Field mParent:Entity
 	Field mCar:Model
+	Field mPath:List<Tile>
+	Field mTarget:Tile
 	
 	Function LoadUnitMesh:Mesh(filename:String)
 		Local wasLoaded:Bool = Mesh.IsLoaded(filename)
@@ -56,6 +63,32 @@ Private
 			Return 180
 		Else
 			Return 0
+		End
+	End
+	
+	Method RotateToTile:Void(tile:Tile)
+		Local myTile:Tile = Tile.FromEntity(mParent)
+		Local yaw:Float = mParent.Yaw
+		If myTile.Column < tile.Column
+			yaw = 90
+		Elseif myTile.Column > tile.Column
+			yaw = -90
+		Elseif myTile.Row < tile.Row
+			yaw = 180
+		Else
+			yaw = 0
+		End
+		mParent.Rotate(0, yaw, 0)
+	End
+	
+	Method CreateAnimatorToNextNode:Bool()
+		If Not mPath.IsEmpty()
+			Local nextTile:Tile = mPath.RemoveFirst()
+			Self.RotateToTile(nextTile)
+			New PositionAnimator(mParent, nextTile.X, 0, nextTile.Z, 1, Self)
+			Return True
+		Else
+			Return False
 		End
 	End
 End
