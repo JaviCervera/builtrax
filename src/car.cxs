@@ -1,6 +1,7 @@
 Strict
 
 Private
+Import gamedelegate
 Import src.animator.animator
 Import src.animator.positionanimator
 Import tile
@@ -8,7 +9,8 @@ Import vortex
 
 Public
 Class Car Implements AnimatorDelegate
-	Method New(tile:Tile)
+	Method New(tile:Tile, delegate:GameDelegate)
+		mGameDelegate = delegate
 		mParent = New Entity()
 		mCar = New Model(LoadUnitMesh("sedanSports.msh.dat"), mParent)
 		mCar.Rotate(0, -90, 0)
@@ -32,13 +34,14 @@ Class Car Implements AnimatorDelegate
 	Method OnAnimatorEnd:Void(animator:Animator)
 		If Not CreateAnimatorToNextNode()
 			If Tile.FromEntity(mParent).Equals(mTarget)
-				Print("You win!")
+				If mGameDelegate <> Null Then mGameDelegate.OnWin()
 			Else
-				Print("You lose :(")
+				If mGameDelegate <> Null Then mGameDelegate.OnLose()
 			End
 		End
 	End
 Private
+	Field mGameDelegate:GameDelegate
 	Field mParent:Entity
 	Field mCar:Model
 	Field mPath:List<Tile>

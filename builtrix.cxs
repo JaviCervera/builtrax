@@ -15,6 +15,7 @@ Import src.animator.animator
 Import src.animator.widgetpositionanimator
 Import src.car
 Import src.flagpole
+Import src.gamedelegate
 Import src.level
 Import src.tile
 Import src.ui.texturewidget
@@ -23,7 +24,7 @@ Import src.ui.widget
 
 Const SCREEN_SIZE:Int = 64
 
-Class BuiltrixApp Extends App Implements AnimatorDelegate, WidgetDelegate
+Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetDelegate
 	Method OnCreate:Int()
 		SetUpdateRate(20)
 		SetSwapInterval(True)
@@ -43,7 +44,7 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, WidgetDelegate
 		mCam.Position(mCam.WorldX, mCam.WorldY - 0.5, mCam.WorldZ)
 		
 		mLevel = New Level(1)
-		mCar = New Car(mLevel.CarTile)
+		mCar = New Car(mLevel.CarTile, Self)
 		mFlag = New FlagPole(mLevel.FlagTile)
 		
 		mButton = New TextureWidget(Texture.Load("run.png"), SCREEN_SIZE - 8, SCREEN_SIZE - 12, Self)
@@ -104,6 +105,14 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, WidgetDelegate
 	
 	Method OnClick:Void(widget:Widget)
 		mCar.SetPath(mLevel.CalculatePathToFlag(), mLevel.FlagTile)
+	End
+	
+	Method OnWin:Void()
+		PresentText("YOU WIN!")
+	End
+	
+	Method OnLose:Void()
+		PresentText("YOU LOSE")
 	End
 Private
 	Const TEXTENTER_ANIMATOR:String = "TextEnter"

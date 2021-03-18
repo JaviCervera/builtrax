@@ -1,0 +1,4 @@
+Interface GameDelegate
+	Method OnWin:Void()
+	Method OnLose:Void()
+End
