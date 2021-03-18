@@ -1,0 +1,60 @@
+Private
+Import grid
+Import mojo.app
+Import tile
+
+Public
+Class Level
+	Method New(levelNumber:Int)
+		Local line:String = LoadString("levels.txt").Replace("\r\n", "\n").Replace("\r", "\n").Split("\n")[levelNumber - 1]
+		Local lineSplit:String[] = line.Split(":")
+		Local carSplit:String[] = lineSplit[0].Split(",")
+		Local flagSplit:String[] = lineSplit[1].Split(",")
+		Local gridSplit:String[] = lineSplit[2].Split(",")
+		Local gridData:Int[][] = New Int[Tile.NumRows][]
+		For Local i:Int = 0 Until Tile.NumRows
+			Local offset:Int = Tile.NumColumns * i
+			gridData[i] = [Int(gridSplit[offset]), Int(gridSplit[offset + 1]), Int(gridSplit[offset + 2])]
+		Next
+		mCarTile = New Tile(Int(carSplit[0]), Int(carSplit[1]))
+		mFlagTile = New Tile(Int(flagSplit[0]), Int(flagSplit[1]))
+		mGrid = Grid.Create(gridData)
+	End
+	
+	Method CarTile:Tile() Property
+		Return mCarTile
+	End
+	
+	Method FlagTile:Tile() Property
+		Return mFlagTile
+	End
+	
+	Method MoveTile:Bool(tile:Tile)
+		mGrid.MoveTile(tile)
+	End
+	
+	Method CarHasEntry:Bool()
+		Return mGrid.NextTile(mCarTile, mGrid.TileExit(mCarTile, -1)) <> Null
+	End
+	
+	Method CalculatePathToFlag:List<Tile>()
+		Local path:List<Tile> = New List<Tile>()
+		Local currentTile:Tile = mCarTile
+		Local currentExit:Int = mGrid.TileExit(currentTile, -1)
+		While Not currentTile.Equals(mFlagTile)
+			If Not currentTile.Equals(mCarTile) Then path.AddLast(currentTile)
+			currentTile = mGrid.NextTile(currentTile, currentExit)
+			If currentTile = Null Then Exit
+			currentExit = mGrid.TileExit(currentTile, currentExit)
+		Wend
+		If currentTile <> Null And currentTile.Equals(mFlagTile) Then path.AddLast(currentTile)
+		Return path
+	End
+Private
+	Field mCarTile:Tile
+	Field mFlagTile:Tile
+	Field mGrid:Grid
+
+	Method New()
+	End
+End

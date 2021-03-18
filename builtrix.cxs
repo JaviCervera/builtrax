@@ -12,7 +12,7 @@ Import vortex
 Import src.animator
 Import src.car
 Import src.flagpole
-Import src.grid
+Import src.level
 Import src.tile
 
 Const SCREEN_SIZE:Int = 64
@@ -36,17 +36,9 @@ Class BuiltrixApp Extends App
 		mCam.Move(0, 0, -7)
 		mCam.Position(mCam.WorldX, mCam.WorldY - 0.5, mCam.WorldZ)
 		
-		mGrid = Grid.Create([
-			[3, 2, 4],
-			[1, 0, 1],
-			[6, 2, 5]])
-		
-		
-		mCarTile = New Tile(1, 3)
-		mCar = New Car(mCarTile)
-		
-		mFlagTile = New Tile(1, -1)
-		mFlag = New FlagPole(mFlagTile)
+		mLevel = New Level(1)
+		mCar = New Car(mLevel.CarTile)
+		mFlag = New FlagPole(mLevel.FlagTile)
 		
 		mButton = Texture.Load("run.png")
 		
@@ -61,7 +53,7 @@ Class BuiltrixApp Extends App
 		
 		UpdatePick()
 		If UpdateButton()
-			mCar.SetPath(CalculatePathToFlag(), mFlagTile)
+			mCar.SetPath(mLevel.CalculatePathToFlag(), mLevel.FlagTile)
 		End
 		Animator.UpdateAll()
 		World.Update()
@@ -92,10 +84,8 @@ Class BuiltrixApp Extends App
 Private
 	Field mFont:Font
 	Field mCam:Camera
-	Field mGrid:Grid
-	Field mCarTile:Tile
+	Field mLevel:Level
 	Field mCar:Car
-	Field mFlagTile:Tile
 	Field mFlag:FlagPole
 	Field mButton:Texture
 	Field mButtonEnabled:Bool
@@ -105,28 +95,14 @@ Private
 	Method UpdatePick:Void()
 		Local ratio:Float = SCREEN_SIZE * 1.0 / mScreenRect.Width
 		If MouseHit(MOUSE_LEFT) And World.CameraPick(mCam, (MouseX() - mScreenRect.X) * ratio, (MouseY() - mScreenRect.Y) * ratio)
-			mGrid.MoveTile(Tile.FromEntity(World.PickedEntity()))
+			mLevel.MoveTile(Tile.FromEntity(World.PickedEntity()))
 		End
 	End
 	
 	Method UpdateButton:Bool()
-		mButtonEnabled = Not mCar.Moving And mGrid.NextTile(mCarTile, mGrid.TileExit(mCarTile, -1)) <> Null
+		mButtonEnabled = Not mCar.Moving And mLevel.CarHasEntry()
 		mButtonHovered = MouseX() >= mScreenRect.X + mScreenRect.Width - (mScreenRect.Width / 4) And MouseY() >= mScreenRect.Y + mScreenRect.Height - (mScreenRect.Height / 4)
 		Return MouseHit(MOUSE_LEFT) And mButtonHovered And mButtonEnabled
-	End
-	
-	Method CalculatePathToFlag:List<Tile>()
-		Local path:List<Tile> = New List<Tile>()
-		Local currentTile:Tile = mCarTile
-		Local currentExit:Int = mGrid.TileExit(currentTile, -1)
-		While Not currentTile.Equals(mFlagTile)
-			If Not currentTile.Equals(mCarTile) Then path.AddLast(currentTile)
-			currentTile = mGrid.NextTile(currentTile, currentExit)
-			If currentTile = Null Then Exit
-			currentExit = mGrid.TileExit(currentTile, currentExit)
-		Wend
-		If currentTile <> Null And currentTile.Equals(mFlagTile) Then path.AddLast(currentTile)
-		Return path
 	End
 End
 
