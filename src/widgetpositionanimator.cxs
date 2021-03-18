@@ -6,8 +6,8 @@ Import vortex.src.math3d
 
 Public
 Class WidgetPositionAnimator Extends Animator
-	Method New(widget:Widget, toX:Int, toY:Int, name:String, time:Float, delegate:AnimatorDelegate)
-		Super.New(name, time, delegate)
+	Method New(widget:Widget, toX:Int, toY:Int, name:String, time:Float, delay:Float, delegate:AnimatorDelegate)
+		Super.New(name, time, delay, delegate)
 		mWidget = widget
 		mStartX = widget.X
 		mStartY = widget.Y

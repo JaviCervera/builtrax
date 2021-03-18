@@ -23,7 +23,7 @@ Import src.widgetpositionanimator
 
 Const SCREEN_SIZE:Int = 64
 
-Class BuiltrixApp Extends App Implements WidgetDelegate
+Class BuiltrixApp Extends App Implements AnimatorDelegate, WidgetDelegate
 	Method OnCreate:Int()
 		SetUpdateRate(20)
 		SetSwapInterval(True)
@@ -56,6 +56,8 @@ Class BuiltrixApp Extends App Implements WidgetDelegate
 		
 		mScreenRect = ScreenRect.Calculate()
 		
+		PresentText("Level 1")
+		
 		Return False
 	End
 	
@@ -64,8 +66,6 @@ Class BuiltrixApp Extends App Implements WidgetDelegate
 		#If TARGET<>"html5"
 		If KeyHit(KEY_ESCAPE) Then EndApp()
 		#End
-		
-		If MouseHit(MOUSE_LEFT) Then PresentText("Hello!")
 		
 		mScreenRect = ScreenRect.Calculate()
 		Local mouseX:Int = mScreenRect.ScreenX(MouseX())
@@ -96,10 +96,18 @@ Class BuiltrixApp Extends App Implements WidgetDelegate
 		Return False
 	End
 	
+	Method OnAnimatorEnd:Void(animator:Animator)
+		If animator.Name = TEXTENTER_ANIMATOR
+			DiscardText()
+		End
+	End
+	
 	Method OnClick:Void(widget:Widget)
 		mCar.SetPath(mLevel.CalculatePathToFlag(), mLevel.FlagTile)
 	End
 Private
+	Const TEXTENTER_ANIMATOR:String = "TextEnter"
+
 	Field mFont:Font
 	Field mCam:Camera
 	Field mLevel:Level
@@ -131,12 +139,17 @@ Private
 		mForegroundText.X = -mForegroundText.Width
 		mForegroundText.Y = (SCREEN_SIZE - mForegroundText.Height) / 2
 		mForegroundText.Visible = True
-		New WidgetPositionAnimator(mForegroundText, (SCREEN_SIZE - mForegroundText.Width) / 2, mForegroundText.Y, "TextEnter", 0.2, Null)
+		New WidgetPositionAnimator(mForegroundText, (SCREEN_SIZE - mForegroundText.Width) / 2, mForegroundText.Y, TEXTENTER_ANIMATOR, 0.2, 0, Self)
 		mBackgroundText.Text = text
 		mBackgroundText.X = SCREEN_SIZE
 		mBackgroundText.Y = (SCREEN_SIZE - mBackgroundText.Height) / 2 + 1
 		mBackgroundText.Visible = True
-		New WidgetPositionAnimator(mBackgroundText, (SCREEN_SIZE - mBackgroundText.Width) / 2 + 1, mBackgroundText.Y, "", 0.2, Null)
+		New WidgetPositionAnimator(mBackgroundText, (SCREEN_SIZE - mBackgroundText.Width) / 2 + 1, mBackgroundText.Y, "", 0.2, 0, Null)
+	End
+	
+	Method DiscardText:Void()
+		New WidgetPositionAnimator(mForegroundText, -mForegroundText.Width, mForegroundText.Y, "", 0.2, 1, Null)
+		New WidgetPositionAnimator(mBackgroundText, SCREEN_SIZE, mBackgroundText.Y, "", 0.2, 1, Null)
 	End
 End
 

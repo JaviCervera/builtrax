@@ -85,7 +85,7 @@ Private
 		If Not mPath.IsEmpty()
 			Local nextTile:Tile = mPath.RemoveFirst()
 			Self.RotateToTile(nextTile)
-			New PositionAnimator(mParent, nextTile.X, 0, nextTile.Z, "CarAnimator", 1, Self)
+			New PositionAnimator(mParent, nextTile.X, 0, nextTile.Z, "CarAnimator", 1, 0, Self)
 			Return True
 		Else
 			Return False
