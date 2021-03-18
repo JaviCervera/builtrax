@@ -1,0 +1,34 @@
+Private
+Import animator
+Import src.ui.widget
+Import vortex
+Import vortex.src.math3d
+
+Public
+Class WidgetPositionAnimator Extends Animator
+	Method New(widget:Widget, toX:Int, toY:Int, name:String, time:Float, delegate:AnimatorDelegate)
+		Super.New(name, time, delegate)
+		mWidget = widget
+		mStartX = widget.X
+		mStartY = widget.Y
+		mEndX = toX
+		mEndY = toY
+	End
+	
+	Method Update:Bool()
+		Super.Update()
+		Local t:Float = Self.Alpha
+		Vec3Mix(mStartX, mStartY, 0, mEndX, mEndY, 0, Min(t, 1.0), mOut)
+		mWidget.X = mOut[0]
+		mWidget.Y = mOut[1]
+		Return t >= 1
+	End
+Private
+	Global mOut:Float[3]
+
+	Field mWidget:Widget
+	Field mStartX:Int
+	Field mStartY:Int
+	Field mEndX:Int
+	Field mEndY:Int
+End

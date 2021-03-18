@@ -1,0 +1,41 @@
+Private
+Import vortex
+Import widget
+
+Public
+Class TextWidget Extends Widget
+	Method New(font:Font, text:String, x:Int, y:Int, delegate:WidgetDelegate)
+		Super.New(x, y, delegate)
+		Self.Font = font
+		Self.Text = text
+	End
+	
+	Method Font:Font() Property
+		Return mFont
+	End
+	
+	Method Font:Void(font:Font) Property
+		mFont = font
+	End
+	
+	Method Text:String() Property
+		Return mText
+	End
+	
+	Method Text:Void(text:String) Property
+		mText = text
+		Self.Width = mFont.TextWidth(text)
+		Self.Height = mFont.TextHeight(text)
+	End
+	
+	Method Draw:Void()
+		Super.Draw()
+		mFont.Draw(Self.X, Self.Y, mText)
+	End
+Private
+	Field mFont:Font
+	Field mText:String
+	
+	Method New()
+	End
+End

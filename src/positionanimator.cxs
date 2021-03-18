@@ -5,8 +5,8 @@ Import vortex.src.math3d
 
 Public
 Class PositionAnimator Extends Animator
-	Method New(entity:Entity, toX:Float, toY:Float, toZ:Float, time:Float, delegate:AnimatorDelegate)
-		Super.New(time, delegate)
+	Method New(entity:Entity, toX:Float, toY:Float, toZ:Float, name:String, time:Float, delegate:AnimatorDelegate)
+		Super.New(name, time, delegate)
 		mEntity = entity
 		mStartX = entity.X
 		mStartY = entity.Y

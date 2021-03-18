@@ -6,9 +6,17 @@ Public
 Class TextureWidget Extends Widget
 	Method New(texture:Texture, x:Int, y:Int, delegate:WidgetDelegate)
 		Super.New(x, y, delegate)
-		mTexture = texture
-		Self.Width = texture.Width
-		Self.Height = texture.Height
+		Self.Texture = texture
+	End
+	
+	Method Texture:Texture() Property
+		Return mTexture
+	End
+	
+	Method Texture:Void(tex:Texture) Property
+		mTexture = tex
+		Self.Width = tex.Width
+		Self.Height = tex.Height
 	End
 	
 	Method Draw:Void()

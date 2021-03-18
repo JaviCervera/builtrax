@@ -17,7 +17,9 @@ Import src.flagpole
 Import src.level
 Import src.tile
 Import src.ui.texturewidget
+Import src.ui.textwidget
 Import src.ui.widget
+Import src.widgetpositionanimator
 
 Const SCREEN_SIZE:Int = 64
 
@@ -45,6 +47,12 @@ Class BuiltrixApp Extends App Implements WidgetDelegate
 		mFlag = New FlagPole(mLevel.FlagTile)
 		
 		mButton = New TextureWidget(Texture.Load("run.png"), SCREEN_SIZE - 8, SCREEN_SIZE - 12, Self)
+		mBackgroundText = New TextWidget(mFont, "", 0, 0, Null)
+		mBackgroundText.Color = Color.Multiply(Color.Green, 0.25)
+		mBackgroundText.Visible = False
+		mForegroundText = New TextWidget(mFont, "", 0, 0, Null)
+		mForegroundText.Color = Color.Yellow
+		mForegroundText.Visible = False
 		
 		mScreenRect = ScreenRect.Calculate()
 		
@@ -56,6 +64,8 @@ Class BuiltrixApp Extends App Implements WidgetDelegate
 		#If TARGET<>"html5"
 		If KeyHit(KEY_ESCAPE) Then EndApp()
 		#End
+		
+		If MouseHit(MOUSE_LEFT) Then PresentText("Hello!")
 		
 		mScreenRect = ScreenRect.Calculate()
 		Local mouseX:Int = mScreenRect.ScreenX(MouseX())
@@ -96,6 +106,8 @@ Private
 	Field mCar:Car
 	Field mFlag:FlagPole
 	Field mButton:Widget
+	Field mBackgroundText:TextWidget
+	Field mForegroundText:TextWidget
 	Field mScreenRect:ScreenRect
 	
 	Method UpdatePick:Void()
@@ -112,6 +124,19 @@ Private
 		Else
 			mButton.Color = Color.Multiply(Color.Green, 0.5)
 		End
+	End
+	
+	Method PresentText:Void(text:String)
+		mForegroundText.Text = text
+		mForegroundText.X = -mForegroundText.Width
+		mForegroundText.Y = (SCREEN_SIZE - mForegroundText.Height) / 2
+		mForegroundText.Visible = True
+		New WidgetPositionAnimator(mForegroundText, (SCREEN_SIZE - mForegroundText.Width) / 2, mForegroundText.Y, "TextEnter", 0.2, Null)
+		mBackgroundText.Text = text
+		mBackgroundText.X = SCREEN_SIZE
+		mBackgroundText.Y = (SCREEN_SIZE - mBackgroundText.Height) / 2 + 1
+		mBackgroundText.Visible = True
+		New WidgetPositionAnimator(mBackgroundText, (SCREEN_SIZE - mBackgroundText.Width) / 2 + 1, mBackgroundText.Y, "", 0.2, Null)
 	End
 End
 

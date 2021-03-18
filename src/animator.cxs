@@ -3,11 +3,16 @@ Import vortex
 
 Public
 Class Animator
-	Method New(time:Float, delegate:AnimatorDelegate)
+	Method New(name:String, time:Float, delegate:AnimatorDelegate)
+		mName = name
 		mRemainingTime = time
 		mTotalTime = time
 		mDelegate = delegate
 		animators.AddLast(Self)
+	End
+	
+	Method Name:String() Property
+		Return mName
 	End
 
 	Method Delegate:AnimatorDelegate() Property
@@ -37,6 +42,7 @@ Class Animator
 Private
 	Global animators:List<Animator> = New List<Animator>()
 
+	Field mName:String
 	Field mRemainingTime:Float
 	Field mTotalTime:Float
 	Field mDelegate:AnimatorDelegate
