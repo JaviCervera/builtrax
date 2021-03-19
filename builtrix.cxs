@@ -185,7 +185,11 @@ Private
 		If mLevel <> Null Then mLevel.Discard()
 		If mCar <> Null Then mCar.Discard()
 		If mFlag <> Null Then mFlag.Discard()
-		mLevel = New Level(mCurrentLevel)
+		mLevel = Level.Load(mCurrentLevel)
+		If mLevel = Null
+			mCurrentLevel = 1
+			mLevel = Level.Load(mCurrentLevel)
+		End
 		mCar = New Car(mLevel.CarTile, Self)
 		mFlag = New FlagPole(mLevel.FlagTile)
 		PresentText("Level " + mCurrentLevel, LEVELTEXT_ANIMATOR)

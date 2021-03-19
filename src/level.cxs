@@ -5,21 +5,27 @@ Import tile
 
 Public
 Class Level
-	Method New(levelNumber:Int)
+	Function Load:Level(levelNumber:Int)
 		Local lines:String[] = LoadString("levels.txt").Replace("~r~n", "~n").Replace("~r", "~n").Split("~n")
-		Local line:String = lines[levelNumber - 1]
-		Local lineSplit:String[] = line.Split(":")
-		Local carSplit:String[] = lineSplit[0].Split(",")
-		Local flagSplit:String[] = lineSplit[1].Split(",")
-		Local gridSplit:String[] = lineSplit[2].Split(",")
-		Local gridData:Int[][] = New Int[Tile.NumRows][]
-		For Local i:Int = 0 Until Tile.NumRows
-			Local offset:Int = Tile.NumColumns * i
-			gridData[i] = [Int(gridSplit[offset]), Int(gridSplit[offset + 1]), Int(gridSplit[offset + 2])]
-		Next
-		mCarTile = New Tile(Int(carSplit[0]), Int(carSplit[1]))
-		mFlagTile = New Tile(Int(flagSplit[0]), Int(flagSplit[1]))
-		mGrid = Grid.Create(gridData)
+		If lines.Length >= levelNumber
+			Local line:String = lines[levelNumber - 1]
+			Local lineSplit:String[] = line.Split(":")
+			Local carSplit:String[] = lineSplit[0].Split(",")
+			Local flagSplit:String[] = lineSplit[1].Split(",")
+			Local gridSplit:String[] = lineSplit[2].Split(",")
+			Local gridData:Int[][] = New Int[Tile.NumRows][]
+			For Local i:Int = 0 Until Tile.NumRows
+				Local offset:Int = Tile.NumColumns * i
+				gridData[i] = [Int(gridSplit[offset]), Int(gridSplit[offset + 1]), Int(gridSplit[offset + 2])]
+			Next
+			Local level:Level = New Level
+			level.mCarTile = New Tile(Int(carSplit[0]), Int(carSplit[1]))
+			level.mFlagTile = New Tile(Int(flagSplit[0]), Int(flagSplit[1]))
+			level.mGrid = Grid.Create(gridData)
+			Return level
+		Else
+			Return Null
+		End
 	End
 	
 	Method Discard:Void()
