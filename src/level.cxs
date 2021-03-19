@@ -41,7 +41,7 @@ Class Level
 	End
 	
 	Method MoveTile:Bool(tile:Tile)
-		mGrid.MoveTile(tile)
+		Return mGrid.MoveTile(tile)
 	End
 	
 	Method CarHasEntry:Bool()

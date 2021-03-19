@@ -2,6 +2,7 @@ Strict
 
 Private
 Import gamedelegate
+Import mojo.audio
 Import src.animator.animator
 Import src.animator.positionanimator
 Import tile
@@ -10,6 +11,7 @@ Import vortex
 Public
 Class Car Implements AnimatorDelegate
 	Method New(tile:Tile, delegate:GameDelegate)
+		InitSound()
 		mGameDelegate = delegate
 		mEntity = New Entity()
 		Local car:Model = New Model(LoadUnitMesh("sedanSports.msh.dat"), mEntity)
@@ -28,6 +30,7 @@ Class Car Implements AnimatorDelegate
 	Method SetPath:Void(path:List<Tile>, target:Tile)
 		mPath = path
 		mTarget = target
+		PlaySound(sound, CAR_CHANNEL, 1)
 		CreateAnimatorToNextNode()
 	End
 	
@@ -37,6 +40,7 @@ Class Car Implements AnimatorDelegate
 	
 	Method OnAnimatorEnd:Void(animator:Animator)
 		If Not CreateAnimatorToNextNode()
+			StopChannel(CAR_CHANNEL)
 			If Tile.FromEntity(mEntity).Equals(mTarget)
 				If mGameDelegate <> Null Then mGameDelegate.OnWin()
 			Else
@@ -45,10 +49,18 @@ Class Car Implements AnimatorDelegate
 		End
 	End
 Private
+	Const CAR_CHANNEL:Int = 2
+
+	Global sound:Sound
+	
 	Field mGameDelegate:GameDelegate
 	Field mEntity:Entity
 	Field mPath:List<Tile>
 	Field mTarget:Tile
+	
+	Function InitSound:Void()
+		If sound = Null Then sound = LoadSound("car.ogg")
+	End
 	
 	Function LoadUnitMesh:Mesh(filename:String)
 		Local wasLoaded:Bool = Mesh.IsLoaded(filename)

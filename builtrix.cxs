@@ -12,6 +12,7 @@ Strict
 #HTML5_CONSOLE_SHOW=True
 
 Import mojo.app
+Import mojo.audio
 Import mojo.input
 Import vortex
 Import src.animator.animator
@@ -30,6 +31,9 @@ Const VERSION:String = "0 . 6"
 
 Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetDelegate
 	Method OnCreate:Int()
+		PlayMusic("music.ogg")
+		SetMusicVolume(0.5)
+	
 		SetUpdateRate(20)
 		SetSwapInterval(True)
 		Seed = Millisecs()
@@ -37,6 +41,11 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		World.SunRotation(45, -135)
 		
 		mCurrentLevel = 1
+		
+		mClickSound = LoadSound("click.wav")
+		mWrongClickSound = LoadSound("wrongclick.wav")
+		mWinSound = LoadSound("win.ogg")
+		mLoseSound = LoadSound("lose.ogg")
 		
 		mFont = Font.Load("8-bit-hud_8.fnt.dat")
 		
@@ -120,13 +129,17 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 	End
 	
 	Method OnWin:Void()
+		PlaySound(mWinSound, WINLOSE_CHANNEL)
 		PresentText("YOU WIN !", WIN_ANIMATOR)
 	End
 	
 	Method OnLose:Void()
+		PlaySound(mLoseSound, WINLOSE_CHANNEL)
 		PresentText("YOU LOSE", LOSE_ANIMATOR)
 	End
 Private
+	Const CLICK_CHANNEL:Int = 0
+	Const WINLOSE_CHANNEL:Int = 1
 	Const LEVELTEXT_ANIMATOR:String = "LevelText"
 	Const WIN_ANIMATOR:String = "Win"
 	Const LOSE_ANIMATOR:String = "Lose"
@@ -134,6 +147,10 @@ Private
 	Const DISCARDLOSE_ANIMATOR:String = "DiscardLose"
 
 	Field mCurrentLevel:Int
+	Field mClickSound:Sound
+	Field mWrongClickSound:Sound
+	Field mWinSound:Sound
+	Field mLoseSound:Sound
 	Field mFont:Font
 	Field mCam:Camera
 	Field mLevel:Level
@@ -148,7 +165,11 @@ Private
 	Method UpdatePick:Void()
 		Local ratio:Float = SCREEN_SIZE * 1.0 / mScreenRect.Width
 		If MouseHit(MOUSE_LEFT) And World.CameraPick(mCam, (MouseX() - mScreenRect.X) * ratio, (MouseY() - mScreenRect.Y) * ratio)
-			mLevel.MoveTile(Tile.FromEntity(World.PickedEntity()))
+			If mLevel.MoveTile(Tile.FromEntity(World.PickedEntity()))
+				PlaySound(mClickSound, CLICK_CHANNEL)
+			Else
+				PlaySound(mWrongClickSound, CLICK_CHANNEL)
+			End
 		End
 	End
 	
