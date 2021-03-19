@@ -12,6 +12,10 @@ Class FlagPole
 		mSprite.AnimFPS = 4
 		mSprite.Position(tile.X, 0.4, tile.Z)
 	End
+	
+	Method Discard:Void()
+		mSprite.Discard()
+	End
 Private
 	Field mSprite:Sprite
 End

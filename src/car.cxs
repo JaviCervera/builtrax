@@ -11,14 +11,18 @@ Public
 Class Car Implements AnimatorDelegate
 	Method New(tile:Tile, delegate:GameDelegate)
 		mGameDelegate = delegate
-		mParent = New Entity()
-		mCar = New Model(LoadUnitMesh("sedanSports.msh.dat"), mParent)
-		mCar.Rotate(0, -90, 0)
-		mCar.Scale(0.8, 0.8, 0.8)
-		mParent.Position(tile.X, 0, tile.Z)
-		mParent.Rotate(0, Yaw(tile), 0)
+		mEntity = New Entity()
+		Local car:Model = New Model(LoadUnitMesh("sedanSports.msh.dat"), mEntity)
+		car.Rotate(0, -90, 0)
+		car.Scale(0.8, 0.8, 0.8)
+		mEntity.Position(tile.X, 0, tile.Z)
+		mEntity.Rotate(0, Yaw(tile), 0)
 		mPath = Null
 		mTarget = Null
+	End
+	
+	Method Discard:Void()
+		mEntity.Discard()
 	End
 	
 	Method SetPath:Void(path:List<Tile>, target:Tile)
@@ -33,7 +37,7 @@ Class Car Implements AnimatorDelegate
 	
 	Method OnAnimatorEnd:Void(animator:Animator)
 		If Not CreateAnimatorToNextNode()
-			If Tile.FromEntity(mParent).Equals(mTarget)
+			If Tile.FromEntity(mEntity).Equals(mTarget)
 				If mGameDelegate <> Null Then mGameDelegate.OnWin()
 			Else
 				If mGameDelegate <> Null Then mGameDelegate.OnLose()
@@ -42,8 +46,7 @@ Class Car Implements AnimatorDelegate
 	End
 Private
 	Field mGameDelegate:GameDelegate
-	Field mParent:Entity
-	Field mCar:Model
+	Field mEntity:Entity
 	Field mPath:List<Tile>
 	Field mTarget:Tile
 	
@@ -70,8 +73,8 @@ Private
 	End
 	
 	Method RotateToTile:Void(tile:Tile)
-		Local myTile:Tile = Tile.FromEntity(mParent)
-		Local yaw:Float = mParent.Yaw
+		Local myTile:Tile = Tile.FromEntity(mEntity)
+		Local yaw:Float = mEntity.Yaw
 		If myTile.Column < tile.Column
 			yaw = 90
 		Elseif myTile.Column > tile.Column
@@ -81,14 +84,14 @@ Private
 		Else
 			yaw = 0
 		End
-		mParent.Rotate(0, yaw, 0)
+		mEntity.Rotate(0, yaw, 0)
 	End
 	
 	Method CreateAnimatorToNextNode:Bool()
 		If Not mPath.IsEmpty()
 			Local nextTile:Tile = mPath.RemoveFirst()
 			Self.RotateToTile(nextTile)
-			New PositionAnimator(mParent, nextTile.X, 0, nextTile.Z, "CarAnimator", 1, 0, Self)
+			New PositionAnimator(mEntity, nextTile.X, 0, nextTile.Z, "CarAnimator", 0.5, 0, Self)
 			Return True
 		Else
 			Return False

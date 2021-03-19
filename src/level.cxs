@@ -6,7 +6,8 @@ Import tile
 Public
 Class Level
 	Method New(levelNumber:Int)
-		Local line:String = LoadString("levels.txt").Replace("\r\n", "\n").Replace("\r", "\n").Split("\n")[levelNumber - 1]
+		Local lines:String[] = LoadString("levels.txt").Replace("~r~n", "~n").Replace("~r", "~n").Split("~n")
+		Local line:String = lines[levelNumber - 1]
 		Local lineSplit:String[] = line.Split(":")
 		Local carSplit:String[] = lineSplit[0].Split(",")
 		Local flagSplit:String[] = lineSplit[1].Split(",")
@@ -19,6 +20,10 @@ Class Level
 		mCarTile = New Tile(Int(carSplit[0]), Int(carSplit[1]))
 		mFlagTile = New Tile(Int(flagSplit[0]), Int(flagSplit[1]))
 		mGrid = Grid.Create(gridData)
+	End
+	
+	Method Discard:Void()
+		mGrid.Discard()
 	End
 	
 	Method CarTile:Tile() Property

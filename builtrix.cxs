@@ -3,10 +3,13 @@ Strict
 #GLFW_WINDOW_TITLE="Builtrix"
 #GLFW_WINDOW_WIDTH=512
 #GLFW_WINDOW_HEIGHT=512
-#HTML5_CANVAS_WIDTH=512
-#HTML5_CANVAS_HEIGHT=512
 #GLFW_WINDOW_RESIZABLE=True
-#GLFW_WINDOW_SAMPLES=0
+#HTML5_APP_FILENAME="index.html"
+#HTML5_APP_ICON=""
+#HTML5_APP_TITLE=GLFW_WINDOW_TITLE
+#HTML5_CANVAS_WIDTH=GLFW_WINDOW_WIDTH
+#HTML5_CANVAS_HEIGHT=GLFW_WINDOW_HEIGHT
+#HTML5_CONSOLE_SHOW=True
 
 Import mojo.app
 Import mojo.input
@@ -32,6 +35,8 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		If Not World.Init() Then EndApp()
 		World.SunRotation(45, -135)
 		
+		mCurrentLevel = 1
+		
 		mFont = Font.Load("8-bit-hud_8.fnt.dat")
 		
 		mCam = New Camera()
@@ -43,10 +48,6 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		mCam.Move(0, 0, -7)
 		mCam.Position(mCam.WorldX, mCam.WorldY - 0.5, mCam.WorldZ)
 		
-		mLevel = New Level(1)
-		mCar = New Car(mLevel.CarTile, Self)
-		mFlag = New FlagPole(mLevel.FlagTile)
-		
 		mButton = New TextureWidget(Texture.Load("run.png"), SCREEN_SIZE - 8, SCREEN_SIZE - 12, Self)
 		mBackgroundText = New TextWidget(mFont, "", 0, 0, Null)
 		mBackgroundText.Color = Color.Multiply(Color.Green, 0.25)
@@ -57,7 +58,7 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		
 		mScreenRect = ScreenRect.Calculate()
 		
-		PresentText("Level 1")
+		ReloadLevel()
 		
 		Return False
 	End
@@ -98,8 +99,17 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 	End
 	
 	Method OnAnimatorEnd:Void(animator:Animator)
-		If animator.Name = TEXTENTER_ANIMATOR
-			DiscardText()
+		Select animator.Name
+		Case LEVELTEXT_ANIMATOR
+			DiscardText(1, "")
+		Case WIN_ANIMATOR
+			DiscardText(2, DISCARDWIN_ANIMATOR)
+		Case LOSE_ANIMATOR
+			DiscardText(2, DISCARDLOSE_ANIMATOR)
+		Case DISCARDWIN_ANIMATOR
+			LoadNextLevel()
+		Case DISCARDLOSE_ANIMATOR
+			ReloadLevel()
 		End
 	End
 	
@@ -108,15 +118,20 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 	End
 	
 	Method OnWin:Void()
-		PresentText("YOU WIN!")
+		PresentText("YOU WIN!", WIN_ANIMATOR)
 	End
 	
 	Method OnLose:Void()
-		PresentText("YOU LOSE")
+		PresentText("YOU LOSE", LOSE_ANIMATOR)
 	End
 Private
-	Const TEXTENTER_ANIMATOR:String = "TextEnter"
+	Const LEVELTEXT_ANIMATOR:String = "LevelText"
+	Const WIN_ANIMATOR:String = "Win"
+	Const LOSE_ANIMATOR:String = "Lose"
+	Const DISCARDWIN_ANIMATOR:String = "DiscardWin"
+	Const DISCARDLOSE_ANIMATOR:String = "DiscardLose"
 
+	Field mCurrentLevel:Int
 	Field mFont:Font
 	Field mCam:Camera
 	Field mLevel:Level
@@ -143,12 +158,12 @@ Private
 		End
 	End
 	
-	Method PresentText:Void(text:String)
+	Method PresentText:Void(text:String, animatorName:String)
 		mForegroundText.Text = text
 		mForegroundText.X = -mForegroundText.Width
 		mForegroundText.Y = (SCREEN_SIZE - mForegroundText.Height) / 2
 		mForegroundText.Visible = True
-		New WidgetPositionAnimator(mForegroundText, (SCREEN_SIZE - mForegroundText.Width) / 2, mForegroundText.Y, TEXTENTER_ANIMATOR, 0.2, 0, Self)
+		New WidgetPositionAnimator(mForegroundText, (SCREEN_SIZE - mForegroundText.Width) / 2, mForegroundText.Y, animatorName, 0.2, 0, Self)
 		mBackgroundText.Text = text
 		mBackgroundText.X = SCREEN_SIZE
 		mBackgroundText.Y = (SCREEN_SIZE - mBackgroundText.Height) / 2 + 1
@@ -156,9 +171,24 @@ Private
 		New WidgetPositionAnimator(mBackgroundText, (SCREEN_SIZE - mBackgroundText.Width) / 2 + 1, mBackgroundText.Y, "", 0.2, 0, Null)
 	End
 	
-	Method DiscardText:Void()
-		New WidgetPositionAnimator(mForegroundText, -mForegroundText.Width, mForegroundText.Y, "", 0.2, 1, Null)
-		New WidgetPositionAnimator(mBackgroundText, SCREEN_SIZE, mBackgroundText.Y, "", 0.2, 1, Null)
+	Method DiscardText:Void(delay:Int, animatorName:String)
+		New WidgetPositionAnimator(mForegroundText, -mForegroundText.Width, mForegroundText.Y, animatorName, 0.2, delay, Self)
+		New WidgetPositionAnimator(mBackgroundText, SCREEN_SIZE, mBackgroundText.Y, "", 0.2, delay, Null)
+	End
+	
+	Method LoadNextLevel:Void()
+		mCurrentLevel += 1
+		ReloadLevel()
+	End
+	
+	Method ReloadLevel:Void()
+		If mLevel <> Null Then mLevel.Discard()
+		If mCar <> Null Then mCar.Discard()
+		If mFlag <> Null Then mFlag.Discard()
+		mLevel = New Level(mCurrentLevel)
+		mCar = New Car(mLevel.CarTile, Self)
+		mFlag = New FlagPole(mLevel.FlagTile)
+		PresentText("Level " + mCurrentLevel, LEVELTEXT_ANIMATOR)
 	End
 End
 

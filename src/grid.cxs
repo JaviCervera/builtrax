@@ -17,6 +17,14 @@ Class Grid Final
 		End
 	End
 	
+	Method Discard:Void()
+		For Local row:Model[] = Eachin mRows
+			For Local model:Model = Eachin row
+				If model <> Null Then model.Discard()
+			Next
+		Next
+	End
+	
 	Method MoveTile:Bool(tile:Tile)
 		Local adjacent:Tile = EmptyAdjacentTile(tile)
 		If adjacent <> Null
