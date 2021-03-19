@@ -1,0 +1,5 @@
+The following assets and bundles have been used:
+
+* https://opengameart.org/content/road-and-water-tiles-from-isometric-set
+* https://opengameart.org/content/car-kit
+* https://opengameart.org/content/platformer-art-pixel-edition
