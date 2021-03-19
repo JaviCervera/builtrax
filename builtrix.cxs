@@ -26,6 +26,7 @@ Import src.ui.textwidget
 Import src.ui.widget
 
 Const SCREEN_SIZE:Int = 64
+Const VERSION:String = "0 . 6"
 
 Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetDelegate
 	Method OnCreate:Int()
@@ -48,13 +49,14 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		mCam.Move(0, 0, -7)
 		mCam.Position(mCam.WorldX, mCam.WorldY - 0.5, mCam.WorldZ)
 		
-		mButton = New TextureWidget(Texture.Load("run.png"), SCREEN_SIZE - 8, SCREEN_SIZE - 12, Self)
+		mButton = New TextureWidget(Texture.Load("run.png"), SCREEN_SIZE - 7, SCREEN_SIZE - 10, Self)
 		mBackgroundText = New TextWidget(mFont, "", 0, 0, Null)
-		mBackgroundText.Color = Color.Multiply(Color.Green, 0.25)
+		mBackgroundText.Color = Color.Multiply(Color.Yellow, 0.25)
 		mBackgroundText.Visible = False
 		mForegroundText = New TextWidget(mFont, "", 0, 0, Null)
 		mForegroundText.Color = Color.Yellow
 		mForegroundText.Visible = False
+		mVersionText = New TextWidget(mFont, "V " + VERSION, 2, SCREEN_SIZE - 11, Null)
 		
 		mScreenRect = ScreenRect.Calculate()
 		
@@ -140,6 +142,7 @@ Private
 	Field mButton:Widget
 	Field mBackgroundText:TextWidget
 	Field mForegroundText:TextWidget
+	Field mVersionText:TextWidget
 	Field mScreenRect:ScreenRect
 	
 	Method UpdatePick:Void()
