@@ -1,10 +1,11 @@
 Strict
 
 Private
+Import animator.animator
+Import animator.positionanimator
+Import channels
 Import gamedelegate
 Import mojo.audio
-Import src.animator.animator
-Import src.animator.positionanimator
 Import tile
 Import vortex
 
@@ -49,8 +50,6 @@ Class Car Implements AnimatorDelegate
 		End
 	End
 Private
-	Const CAR_CHANNEL:Int = 2
-
 	Global sound:Sound
 	
 	Field mGameDelegate:GameDelegate

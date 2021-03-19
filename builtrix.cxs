@@ -18,6 +18,7 @@ Import vortex
 Import src.animator.animator
 Import src.animator.widgetpositionanimator
 Import src.car
+Import src.channels
 Import src.flagpole
 Import src.gamedelegate
 Import src.level
@@ -27,13 +28,10 @@ Import src.ui.textwidget
 Import src.ui.widget
 
 Const SCREEN_SIZE:Int = 64
-Const VERSION:String = "0 . 6"
+Const VERSION:String = "0 . 7"
 
 Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetDelegate
-	Method OnCreate:Int()
-		PlayMusic("music.ogg")
-		SetMusicVolume(0.5)
-	
+	Method OnCreate:Int()	
 		SetUpdateRate(20)
 		SetSwapInterval(True)
 		Seed = Millisecs()
@@ -43,6 +41,7 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		mCurrentLevel = 1
 		mInGame = False
 		
+		mMusicSound = LoadSound("music.ogg")
 		mClickSound = LoadSound("click.ogg")
 		mWrongClickSound = LoadSound("wrongclick.ogg")
 		mWinSound = LoadSound("win.ogg")
@@ -94,6 +93,11 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 	End
 	
 	Method OnRender:Int()
+		If ChannelState(MUSIC_CHANNEL) <> 1
+			PlaySound(mMusicSound, MUSIC_CHANNEL, 1)
+			SetChannelVolume(MUSIC_CHANNEL, 0.5)
+		End
+	
 		'Draw world to framebuffer
 		World.Render()
 		
@@ -142,8 +146,6 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		PresentText("YOU LOSE", LOSE_ANIMATOR)
 	End
 Private
-	Const CLICK_CHANNEL:Int = 0
-	Const WINLOSE_CHANNEL:Int = 1
 	Const LEVELTEXT_ANIMATOR:String = "LevelText"
 	Const DISCARDLEVELTEXT_ANIMATOR:String = "DiscardLevelText"
 	Const WIN_ANIMATOR:String = "Win"
@@ -153,6 +155,7 @@ Private
 
 	Field mCurrentLevel:Int
 	Field mInGame:Bool
+	Field mMusicSound:Sound
 	Field mClickSound:Sound
 	Field mWrongClickSound:Sound
 	Field mWinSound:Sound

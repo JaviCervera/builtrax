@@ -1,0 +1,6 @@
+Strict
+
+Const MUSIC_CHANNEL:Int = 0
+Const CLICK_CHANNEL:Int = 1
+Const WINLOSE_CHANNEL:Int = 2
+Const CAR_CHANNEL:Int = 3
