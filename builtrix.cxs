@@ -41,6 +41,7 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		World.SunRotation(45, -135)
 		
 		mCurrentLevel = 1
+		mInGame = False
 		
 		mClickSound = LoadSound("click.ogg")
 		mWrongClickSound = LoadSound("wrongclick.ogg")
@@ -83,10 +84,10 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		mScreenRect = ScreenRect.Calculate()
 		Local mouseX:Int = mScreenRect.ScreenX(MouseX())
 		Local mouseY:Int = mScreenRect.ScreenY(MouseY())
-		UpdatePick()
+		If mInGame Then UpdatePick()
 		UpdateButton(mouseX, mouseY)
 		Animator.UpdateAll()
-		Widget.UpdateAll(mouseX, mouseY, MouseHit(MOUSE_LEFT) <> 0)
+		Widget.UpdateAll(mouseX, mouseY, mInGame And MouseHit(MOUSE_LEFT) <> 0)
 		World.Update()
 		
 		Return False
@@ -112,7 +113,9 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 	Method OnAnimatorEnd:Void(animator:Animator)
 		Select animator.Name
 		Case LEVELTEXT_ANIMATOR
-			DiscardText(1, "")
+			DiscardText(1, DISCARDLEVELTEXT_ANIMATOR)
+		Case DISCARDLEVELTEXT_ANIMATOR
+			mInGame = True
 		Case WIN_ANIMATOR
 			DiscardText(2, DISCARDWIN_ANIMATOR)
 		Case LOSE_ANIMATOR
@@ -125,6 +128,7 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 	End
 	
 	Method OnClick:Void(widget:Widget)
+		mInGame = False
 		mCar.SetPath(mLevel.CalculatePathToFlag(), mLevel.FlagTile)
 	End
 	
@@ -141,12 +145,14 @@ Private
 	Const CLICK_CHANNEL:Int = 0
 	Const WINLOSE_CHANNEL:Int = 1
 	Const LEVELTEXT_ANIMATOR:String = "LevelText"
+	Const DISCARDLEVELTEXT_ANIMATOR:String = "DiscardLevelText"
 	Const WIN_ANIMATOR:String = "Win"
 	Const LOSE_ANIMATOR:String = "Lose"
 	Const DISCARDWIN_ANIMATOR:String = "DiscardWin"
 	Const DISCARDLOSE_ANIMATOR:String = "DiscardLose"
 
 	Field mCurrentLevel:Int
+	Field mInGame:Bool
 	Field mClickSound:Sound
 	Field mWrongClickSound:Sound
 	Field mWinSound:Sound
@@ -174,7 +180,7 @@ Private
 	End
 	
 	Method UpdateButton:Void(mouseX:Int, mouseY:Int)
-		mButton.Visible = Not mCar.Moving And mLevel.CarHasEntry()
+		mButton.Visible = mInGame And Not mCar.Moving And mLevel.CarHasEntry()
 		If mButton.IsHovered(mouseX, mouseY)
 			mButton.Color = Color.Green
 		Else
