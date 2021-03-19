@@ -42,8 +42,8 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		
 		mCurrentLevel = 1
 		
-		mClickSound = LoadSound("click.wav")
-		mWrongClickSound = LoadSound("wrongclick.wav")
+		mClickSound = LoadSound("click.ogg")
+		mWrongClickSound = LoadSound("wrongclick.ogg")
 		mWinSound = LoadSound("win.ogg")
 		mLoseSound = LoadSound("lose.ogg")
 		
