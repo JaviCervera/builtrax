@@ -118,7 +118,7 @@ Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 	End
 	
 	Method OnWin:Void()
-		PresentText("YOU WIN!", WIN_ANIMATOR)
+		PresentText("YOU WIN !", WIN_ANIMATOR)
 	End
 	
 	Method OnLose:Void()
