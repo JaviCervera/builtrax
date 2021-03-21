@@ -11,7 +11,8 @@ jobs:
       - name: Install Vortex lib 📚
         run: git clone -b release/2.0 https://github.com/JaviCervera/vortex.git .github/tools/Cerberus/modules_ext/vortex
       - name: Build Builtrax 🔧
-        run: .github/tools/Cerberus/bin/transcc_linux -target=Html5_Game -config=Release builtrax.cxs
+        run: ls .github/tools/Cerberus
+        #run: .github/tools/Cerberus/bin/transcc_linux -target=Html5_Game -config=Release builtrax.cxs
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
