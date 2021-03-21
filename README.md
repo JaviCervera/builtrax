@@ -1,5 +1,7 @@
 # Builtrax
 
+![screenshot](screenshots/screenshot.png)
+
 Diveros Compo 2021 entry, developed by Javi "Jedive" Cervera.
 
 The game is automatically deployed to [Github Pages](https://javicervera.github.io/builtrax/).
