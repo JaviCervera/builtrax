@@ -1,0 +1,22 @@
+name: Deploy
+on: [push]
+jobs:
+  deploy-pages:
+    needs: deploy-package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+      - name: Install Cerberus-X 📥
+        run: tar -zxf .github/tools/Cerberus-v2020-12.05.tar.gz
+      - name: Install Vortex lib 📚
+        run: git clone -b release/2.0 https://github.com/JaviCervera/vortex.git .github/tools/Cerberus/modules_ext/vortex
+      - name: Build Builtrax 🔧
+        run: .github/tools/Cerberus/bin/transcc_linux -target=Html5_Game -config=Release builtrax.cxs
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: builtrax.buildv2020-12-05
+          CLEAN: false
