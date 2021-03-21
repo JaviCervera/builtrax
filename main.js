@@ -36,7 +36,7 @@ CFG_TEXT_FILES="*.txt|*.xml|*.json";
 //${CONFIG_END}
 
 //${METADATA_BEGIN}
-var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n";
+var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n[01.png];type=image/png;width=64;height=64;\n[02.png];type=image/png;width=64;height=64;\n[03.png];type=image/png;width=64;height=64;\n[04.png];type=image/png;width=64;height=64;\n[05.png];type=image/png;width=64;height=64;\n[06.png];type=image/png;width=64;height=64;\n[07.png];type=image/png;width=64;height=64;\n[8-bit-hud_8.png];type=image/png;width=128;height=128;\n[flagpole.png];type=image/png;width=32;height=16;\n[run.png];type=image/png;width=8;height=8;\n";
 //${METADATA_END}
 
 //${TRANSCODE_BEGIN}
