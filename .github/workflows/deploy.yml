@@ -9,10 +9,9 @@ jobs:
       - name: Install Cerberus-X 📥
         run: tar -zxf .github/tools/Cerberus-v2020-12.05.tar.gz
       - name: Install Vortex lib 📚
-        run: git clone -b release/2.0 https://github.com/JaviCervera/vortex.git .github/tools/Cerberus/modules_ext/vortex
+        run: git clone -b release/2.0 https://github.com/JaviCervera/vortex.git .Cerberus/modules_ext/vortex
       - name: Build Builtrax 🔧
-        run: ls .github/tools/Cerberus
-        #run: .github/tools/Cerberus/bin/transcc_linux -target=Html5_Game -config=Release builtrax.cxs
+        run: .Cerberus/bin/transcc_linux -target=Html5_Game -config=Release builtrax.cxs
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
