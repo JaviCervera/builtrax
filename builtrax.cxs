@@ -9,7 +9,8 @@ Strict
 #HTML5_APP_TITLE=GLFW_WINDOW_TITLE
 #HTML5_CANVAS_WIDTH=GLFW_WINDOW_WIDTH
 #HTML5_CANVAS_HEIGHT=GLFW_WINDOW_HEIGHT
-#HTML5_CONSOLE_SHOW=True
+#HTML5_CONSOLE_SHOW=False
+#HTML5_WEBAUDIO_ENABLED=False
 
 Import mojo.app
 Import mojo.audio
@@ -28,7 +29,6 @@ Import src.ui.textwidget
 Import src.ui.widget
 
 Const SCREEN_SIZE:Int = 64
-Const VERSION:String = "0 . 7"
 
 Class BuiltraxApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetDelegate
 	Method OnCreate:Int()	
@@ -65,7 +65,6 @@ Class BuiltraxApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		mForegroundText = New TextWidget(mFont, "", 0, 0, Null)
 		mForegroundText.Color = Color.Yellow
 		mForegroundText.Visible = False
-		mVersionText = New TextWidget(mFont, "V " + VERSION, 2, SCREEN_SIZE - 11, Null)
 		
 		mScreenRect = ScreenRect.Calculate()
 		
@@ -168,7 +167,6 @@ Private
 	Field mButton:Widget
 	Field mBackgroundText:TextWidget
 	Field mForegroundText:TextWidget
-	Field mVersionText:TextWidget
 	Field mScreenRect:ScreenRect
 	
 	Method UpdatePick:Void()
