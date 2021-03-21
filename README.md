@@ -2,6 +2,8 @@
 
 Diveros Compo 2021 entry, developed by Javi "Jedive" Cervera.
 
+The game is automatically deployed to [Github Pages](https://javicervera.github.io/builtrax/).
+
 The following assets and bundles have been used:
 
 * https://opengameart.org/content/road-and-water-tiles-from-isometric-set
