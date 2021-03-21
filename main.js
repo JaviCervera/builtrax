@@ -19,8 +19,8 @@ CFG_HTML5_APP_TITLE="Builtrax";
 CFG_HTML5_CANVAS_HEIGHT="512";
 CFG_HTML5_CANVAS_RESIZE_MODE="1";
 CFG_HTML5_CANVAS_WIDTH="512";
-CFG_HTML5_CONSOLE_SHOW="1";
-CFG_HTML5_WEBAUDIO_ENABLED="1";
+CFG_HTML5_CONSOLE_SHOW="0";
+CFG_HTML5_WEBAUDIO_ENABLED="0";
 CFG_IMAGE_FILES="*.png|*.jpg|*.bmp|*.tga;*.png|*.jpg";
 CFG_LANG="js";
 CFG_MODPATH="";
@@ -2905,7 +2905,6 @@ function c_BuiltraxApp(){
 	this.m_mButton=null;
 	this.m_mBackgroundText=null;
 	this.m_mForegroundText=null;
-	this.m_mVersionText=null;
 	this.m_mScreenRect=null;
 	this.m_mLevel=null;
 	this.m_mCar=null;
@@ -2979,7 +2978,6 @@ c_BuiltraxApp.prototype.p_OnCreate=function(){
 	this.m_mForegroundText=c_TextWidget.m_new.call(new c_TextWidget,this.m_mFont,"",0,0,null);
 	this.m_mForegroundText.p_Color(-256);
 	this.m_mForegroundText.p_Visible2(false);
-	this.m_mVersionText=c_TextWidget.m_new.call(new c_TextWidget,this.m_mFont,"V 0 . 7",2,53,null);
 	this.m_mScreenRect=c_ScreenRect.m_Calculate();
 	this.p_ReloadLevel();
 	return 0;
