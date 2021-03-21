@@ -17,5 +17,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: builtrax.buildv2020-12-05
+          FOLDER: builtrax.buildv2020-12-05/html5
           CLEAN: false
