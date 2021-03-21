@@ -1,6 +1,6 @@
 Strict
 
-#GLFW_WINDOW_TITLE="Builtrix"
+#GLFW_WINDOW_TITLE="Builtrax"
 #GLFW_WINDOW_WIDTH=512
 #GLFW_WINDOW_HEIGHT=512
 #GLFW_WINDOW_RESIZABLE=True
@@ -30,7 +30,7 @@ Import src.ui.widget
 Const SCREEN_SIZE:Int = 64
 Const VERSION:String = "0 . 7"
 
-Class BuiltrixApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetDelegate
+Class BuiltraxApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetDelegate
 	Method OnCreate:Int()	
 		SetUpdateRate(20)
 		SetSwapInterval(True)
@@ -230,7 +230,7 @@ Private
 End
 
 Function Main:Int()
-	New BuiltrixApp
+	New BuiltraxApp
 	Return False
 End
 
