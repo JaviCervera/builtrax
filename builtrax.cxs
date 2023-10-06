@@ -57,7 +57,7 @@ Class BuiltraxApp Extends App Implements AnimatorDelegate, GameDelegate, WidgetD
 		mCam.Move(0, 0, -7)
 		mCam.Position(mCam.WorldX, mCam.WorldY - 0.5, mCam.WorldZ)
 		
-		mButton = New TextureWidget(Texture.Load("run.png"), SCREEN_SIZE - 7, SCREEN_SIZE - 10, Self)
+		mButton = New TextureWidget(Texture.Load("run.png"), SCREEN_SIZE / 2, SCREEN_SIZE - 10, Self)
 		mBackgroundText = New TextWidget(mFont, "", 0, 0, Null)
 		mBackgroundText.Color = Color.Multiply(Color.Yellow, 0.25)
 		mBackgroundText.Visible = False
